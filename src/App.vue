@@ -4,6 +4,7 @@ import { onMounted } from 'vue'
 import { useFishStore } from './stores/fish'
 import VFishList from './components/VFishList.vue'
 import VLoading from './components/ui/VLoading.vue'
+import VAquariumSettings from './components/VAquariumSettings.vue'
 
 const fishStore = useFishStore()
 
@@ -17,6 +18,7 @@ onMounted(() => {
     <VLoading />
   </template>
   <template v-else>
+    <VAquariumSettings />
     <VAquarium />
     <VFishList />
   </template>

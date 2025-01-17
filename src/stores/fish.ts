@@ -17,6 +17,27 @@ export const useFishStore = defineStore('fish', () => {
     }
   }
 
+  const feedFish = (fishId: string) => {
+    const now = new Date()
+    const currentTime = now.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    })
 
-  return { fishList, isLoading, error, getFishList }
+    const fishIndex = fishList.value.findIndex(fish => fish.id === fishId)
+    if (fishIndex !== -1) {
+      fishList.value[fishIndex] = {
+        ...fishList.value[fishIndex],
+        feedingSchedule: {
+          ...fishList.value[fishIndex].feedingSchedule,
+          lastFeed: currentTime
+        }
+      }
+    }
+  }
+  
+
+
+  return { fishList, isLoading, error, getFishList, feedFish }
 })
