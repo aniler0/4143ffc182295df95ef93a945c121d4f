@@ -46,18 +46,19 @@ export const useFishStore = defineStore('fish', () => {
     })
 
     const fishIndex = fishList.value.findIndex(fish => fish.id === fishId)
-
-    if (fishIndex) {
+    if (fishIndex !== -1) {
       fishList.value[fishIndex] = {
         ...fishList.value[fishIndex],
         feedingSchedule: {
           ...fishList.value[fishIndex].feedingSchedule,
           lastFeed: currentTime,
-          lastFeedFullTime: now  // Add this line
+          lastFeedFullTime: new Date(now) // Add this line to update the full timestamp
         }
       }
     }
   }
+
+
 
   return { fishList, isLoading, error, getFishList, feedFish }
 })

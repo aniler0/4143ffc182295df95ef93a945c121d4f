@@ -32,9 +32,9 @@ export function getLastFeedTimeFormatted(lastFeedTime: string, currentDateTime: 
     return `${totalHours} hours`
 }
 
-export function formatTimeDifference(currentTime: Date, lastFeedTime: Date): string {
+export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date): string {
     const diffInMinutes = Math.floor(
-        (currentTime.getTime() - lastFeedTime.getTime()) / (1000 * 60)
+        (currentTime.getTime() - lastFeedFullTime.getTime()) / (1000 * 60)
     )
 
     if (diffInMinutes < 60) {
