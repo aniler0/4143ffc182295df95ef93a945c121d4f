@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const x = ref(0)
 const y = ref(0)
@@ -10,10 +10,10 @@ const updatePosition = () => {
   prevX.value = x.value
   const newX = Math.random() * 80
   const newY = Math.random() * 80
-  
+
   // Determine direction based on X movement
   isMovingLeft.value = newX < prevX.value
-  
+
   x.value = newX
   y.value = newY
   setTimeout(updatePosition, Math.random() * 3000 + 2000)
@@ -22,18 +22,10 @@ const updatePosition = () => {
 onMounted(() => {
   updatePosition()
 })
-
 </script>
 
 <template>
-  <div 
-    class="fish-container" 
-    :style="{ 
-      left: x + '%', 
-      top: y + '%',
-      transform: isMovingLeft ? 'scaleX(-1)' : 'scaleX(1)'
-    }"
-  >
+  <div class="fish-container">
     <div class="fish">
       <div class="eye"></div>
     </div>
@@ -44,7 +36,6 @@ onMounted(() => {
 .fish-container {
   position: absolute;
   transform-origin: center;
-  transition: all 3s ease-in-out;
 }
 
 .fish {
@@ -53,7 +44,7 @@ onMounted(() => {
   height: 60px;
   background: linear-gradient(45deg, #ff6b6b, #ff8787);
   border-radius: 50px 80px 20px 50px;
-  animation: swim 1s ease-in-out infinite;
+  transform: rotateY(180deg);
 }
 
 .fish::before {
@@ -98,19 +89,5 @@ onMounted(() => {
   border-radius: 50%;
   top: 3px;
   left: 3px;
-}
-
-@keyframes swim {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(10px);
-  }
-}
-
-.fish-container[style*="rotate(180)"] .fish,
-.fish-container[style*="rotate(-180)"] .fish {
-  transform: scaleX(-1);
 }
 </style>
