@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import VAquarium from '@/components/VAquarium.vue'
 import { onMounted } from 'vue'
-import { useFishStore } from './stores/fish'
-import VFishList from './components/VFishList.vue'
 import VLoading from './components/ui/VLoading.vue'
 import VAquariumSettings from './components/VAquariumSettings.vue'
+import VFishTable from './components/VFishTable.vue'
+import { useFishStore } from './stores/fishStore'
 
 const fishStore = useFishStore()
 
@@ -20,6 +20,6 @@ onMounted(() => {
   <template v-else>
     <VAquariumSettings />
     <VAquarium />
-    <VFishList />
+    <VFishTable />
   </template>
 </template>

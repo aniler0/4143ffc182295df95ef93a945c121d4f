@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VAquariumBubbles from '@/components/VAquariumBubbles.vue'
 import VFish from '@/components/VFish.vue'
-import { useFishStore } from '@/stores/fish';
+import { useFishStore } from '@/stores/fishStore'
 
 const fishStore = useFishStore()
 </script>
@@ -10,7 +10,7 @@ const fishStore = useFishStore()
   <div class="aquarium-container">
     <div class="aquarium">
       <VAquariumBubbles />
-      <template v-for="(item,index) in fishStore.fishList" :key="index">
+      <template v-for="(item, index) in fishStore.fishList" :key="index">
         <div>
           <VFish :fish="item" />
         </div>

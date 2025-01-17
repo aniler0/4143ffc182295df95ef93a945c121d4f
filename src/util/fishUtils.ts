@@ -11,26 +11,36 @@ export function getHealthStatusText(status: HealthStatusEnum): string {
     }
 }
 
-export function getTimePassed(lastFeedTime: string): string {
-    const [hour, minute] = lastFeedTime.split(':').map(Number)
-    const today = new Date()
-    const lastFeed = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
-        hour,
-        minute
+export function getLastFeedTimeFormatted(lastFeedTime: string, currentDateTime: Date): string {
+    const [hours, minutes] = lastFeedTime.split(':').map(Number)
+
+    const feedDate = new Date(currentDateTime)
+    feedDate.setHours(hours, minutes)
+
+    if (feedDate > currentDateTime) {
+        feedDate.setDate(feedDate.getDate() - 1)
+    }
+
+    const diffInMinutes = Math.floor((currentDateTime.getTime() - feedDate.getTime()) / (1000 * 60))
+
+    if (diffInMinutes < 60) {
+        return `${diffInMinutes} minutes`
+    }
+
+    // Calculate total hours, rounding up
+    const totalHours = Math.ceil(diffInMinutes / 60)
+    return `${totalHours} hours`
+}
+
+export function formatTimeDifference(currentTime: Date, lastFeedTime: Date): string {
+    const diffInMinutes = Math.floor(
+        (currentTime.getTime() - lastFeedTime.getTime()) / (1000 * 60)
     )
 
-    const now = new Date()
-    const diffInMs = now.getTime() - lastFeed.getTime()
-
-    const hours = Math.floor(diffInMs / (1000 * 60 * 60))
-    const minutes = Math.floor((diffInMs % (1000 * 60 * 60)) / (1000 * 60))
-
-    if (hours > 0) {
-        return `${hours}h ${minutes}m`
+    if (diffInMinutes < 60) {
+        return `${diffInMinutes} minutes`
     }
-    return `${minutes}m`
 
+    const totalHours = Math.ceil(diffInMinutes / 60)
+    return `${totalHours} hours`
 }

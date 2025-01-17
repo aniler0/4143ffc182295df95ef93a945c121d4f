@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { useFishStore } from '@/stores/fish'
-import { getHealthStatusText, getTimePassed } from '@/util/fishUtils'
+import { useFishStore } from '@/stores/fishStore'
+import { useTimeStore } from '@/stores/timeStore'
+import { formatTimeDifference, getHealthStatusText } from '@/util/fishUtils'
 import { computed } from 'vue'
 
 const fishStore = useFishStore()
+const timeStore = useTimeStore()
 
 const columns = [
   {
@@ -38,10 +40,11 @@ const columns = [
   },
 ]
 
-const getLastFeedTime = (lastFeedTime: string) =>
-  computed(() => {
-    return getTimePassed(lastFeedTime)
-  })
+const getTimeDifference = computed(() => {
+  return (lastFeedFullTime: Date) =>
+    formatTimeDifference(timeStore.currentDateTime, lastFeedFullTime)
+})
+
 </script>
 
 <template>
@@ -55,7 +58,7 @@ const getLastFeedTime = (lastFeedTime: string) =>
       </template>
       <template v-if="column.key === 'weight'"> {{ record.weight }}g </template>
       <template v-if="column.key === 'lastFeed'">
-        {{ getLastFeedTime(record.feedingSchedule.lastFeed) }} ago
+        {{ getTimeDifference(record.feedingSchedule.lastFeedFullTime) }} ago
       </template>
       <template v-if="column.key === 'health'">
         {{ getHealthStatusText(record.health) }}

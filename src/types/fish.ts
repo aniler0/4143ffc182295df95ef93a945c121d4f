@@ -11,7 +11,7 @@ export interface IFish {
     type: string
     name: string
     weight: number
-    feedingSchedule: FeedingSchedule
+    feedingSchedule: FeedingSchedule & { lastFeedFullTime: Date }
     health: number
 }
 
