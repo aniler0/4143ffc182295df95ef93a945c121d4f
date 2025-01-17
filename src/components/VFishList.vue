@@ -1,146 +1,64 @@
 <script setup lang="ts">
-import type { IFish } from '@/types/fish';
+import { useFishStore } from '@/stores/fish'
 import { getHealthStatusText } from '@/util/fishUtils';
-import { defineProps } from 'vue'
 
-defineProps<{
-  headers: { key: string; label: string }[]
-  data: IFish[]
-}>()
+const fishStore = useFishStore()
 
-const emit = defineEmits<{
-  (e: 'action', item: IFish): void
-}>()
+const columns = [
+  {
+    title: 'Fish Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Type',
+    dataIndex: 'type',
+    key: 'type',
+  },
+  {
+    title: 'Weight',
+    dataIndex: 'weight',
+    key: 'weight',
+  },
+  {
+    title: 'Last Feed',
+    dataIndex: 'lastFeed',
+    key: 'lastFeed',
+  },
+  {
+    title: 'Health',
+    dataIndex: 'health',
+    key: 'health',
+  },
+  {
+    title: 'Actions',
+    dataIndex: 'actions',
+    key: 'actions',
+  },
+]
 </script>
 
 <template>
-  <div class="table-wrapper">
-    <table class="base-table">
-      <thead>
-        <tr>
-          <th v-for="header in headers" :key="header.key">
-            {{ header.label }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(row, index) in data" :key="index">
-          <td>{{ row.name }}</td>
-          <td>{{ row.type }}</td>
-          <td>{{ row.weight }}</td>
-          <td>{{ row.feedingSchedule.lastFeed }}</td>
-          <td>{{ getHealthStatusText(row.health) }}</td>
-          <td>
-            <button
-              :key="index"
-              class="action-btn"
-              @click="() => emit('action', row)"
-            >
-              Feed
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <a-table :dataSource="fishStore.fishList" :columns="columns" :pagination="false">
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'name'">
+          {{ record.name }}
+      </template>
+      <template v-if="column.key === 'type'">
+          {{ record.type }}
+      </template>
+      <template v-if="column.key === 'weight'">
+          {{ record.weight }}g
+      </template>
+      <template v-if="column.key === 'lastFeed'">
+          {{ record.feedingSchedule.lastFeed }}
+      </template>
+      <template v-if="column.key === 'health'">
+          {{ getHealthStatusText(record.health) }}
+      </template>
+      <template v-if="column.key === 'actions'">
+        <a-button type="primary">Feed</a-button>
+      </template>
+    </template>
+  </a-table>
 </template>
-
-<style scoped>
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: 8px;
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.base-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin: 0;
-  background-color: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.base-table th,
-.base-table td {
-  padding: 1rem 1.5rem;
-  text-align: left;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.base-table th {
-  background-color: #f8fafc;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.875rem;
-  letter-spacing: 0.05em;
-  color: #475569;
-}
-
-.base-table td {
-  font-size: 0.95rem;
-  color: #1e293b;
-}
-
-.base-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.base-table tbody tr:hover {
-  background-color: #f1f5f9;
-  transition: all 0.2s ease;
-}
-
-.action-btn {
-  padding: 0.3rem 1rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 400;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.action-btn i {
-  font-size: 1rem;
-}
-
-.action-btn.primary {
-  background: linear-gradient(135deg, #4f46e5, #3b82f6);
-  color: white;
-}
-
-.action-btn.danger {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
-  color: white;
-}
-
-.action-btn.warning {
-  background: linear-gradient(135deg, #d97706, #f59e0b);
-  color: white;
-}
-
-.action-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  opacity: 0.95;
-}
-
-.action-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 640px) {
-  .base-table th,
-  .base-table td {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-  }
-}
-</style>

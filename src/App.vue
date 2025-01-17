@@ -7,16 +7,6 @@ import VLoading from './components/ui/VLoading.vue'
 
 const fishStore = useFishStore()
 
-const tableHeaders = [
-  { key: 'name', label: 'Fish Name' },
-  { key: 'type', label: 'Type' },
-  { key: 'weight', label: 'Weight'},
-  { key: 'lastFeed', label: 'Last Feed' },
-  { key: 'health', label: 'Health' },
-  {key: 'actions', label: 'Actions'}
-]
-
-
 onMounted(() => {
   fishStore.getFishList()
 })
@@ -28,6 +18,6 @@ onMounted(() => {
   </template>
   <template v-else>
     <VAquarium />
-    <VFishList :headers="tableHeaders" :data="fishStore.fishList" />
+    <VFishList />
   </template>
 </template>

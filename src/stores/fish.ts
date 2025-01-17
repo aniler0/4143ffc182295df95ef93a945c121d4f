@@ -1,7 +1,7 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
-import { HealthStatusEnum, type IFish, type IFishResponse } from '@/types/fish'
 import { useFetch } from '@/composables/useFetch'
+import { HealthStatusEnum, type IFish, type IFishResponse } from '@/types/fish'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 export const useFishStore = defineStore('fish', () => {
   const fishList = ref<IFish[]>([])
@@ -12,10 +12,11 @@ export const useFishStore = defineStore('fish', () => {
     if (data.value) {
       fishList.value = data.value.map(fish => ({
         ...fish,
-        health: HealthStatusEnum.Healty // or any other default
+        health: HealthStatusEnum.Critical // or any other default
       }))
     }
   }
+
 
   return { fishList, isLoading, error, getFishList }
 })
