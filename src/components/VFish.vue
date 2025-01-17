@@ -1,43 +1,12 @@
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
-const x = ref(0)
-const y = ref(0)
-const prevX = ref(0)
-const isMovingLeft = ref(false)
-
-const updatePosition = () => {
-  prevX.value = x.value
-  const newX = Math.random() * 80
-  const newY = Math.random() * 80
-
-  // Determine direction based on X movement
-  isMovingLeft.value = newX < prevX.value
-
-  x.value = newX
-  y.value = newY
-  setTimeout(updatePosition, Math.random() * 3000 + 2000)
-}
-
-onMounted(() => {
-  updatePosition()
-})
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div class="fish-container">
-    <div class="fish">
-      <div class="eye"></div>
-    </div>
+  <div class="fish">
+    <div class="eye"></div>
   </div>
 </template>
 
 <style scoped>
-.fish-container {
-  position: absolute;
-  transform-origin: center;
-}
-
 .fish {
   position: relative;
   width: 120px;

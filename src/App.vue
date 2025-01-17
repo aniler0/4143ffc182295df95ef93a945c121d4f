@@ -1,63 +1,33 @@
 <script setup lang="ts">
-import AquariumBase from '@/components/AquariumBase.vue'
-import VTable from '@/components/ui/VTable.vue'
-const fishData = [
-  {
-    name: 'Goldfish',
-    type: 'Freshwater',
-    weight: '0.5kg',
-    lastFeed: '2 days ago',
-    health: 'Good',
-  },
-  {
-    name: 'Betta',
-    type: 'Freshwater',
-    weight: '0.1kg',
-    lastFeed: '1 day ago',
-    health: 'Good',
-  },
-  {
-    name: 'Clownfish',
-    type: 'Saltwater',
-    weight: '0.3kg',
-    lastFeed: '3 days ago',
-    health: 'Good',
-  },
-  {
-    name: 'Koi',
-    type: 'Freshwater',
-    weight: '1kg',
-    lastFeed: '4 days ago',
-    health: 'Good',
-  },
-  {
-    name: 'Tang',
-    type: 'Saltwater',
-    weight: '0.8kg',
-    lastFeed: '2 days ago',
-    health: 'Good',
-  },
-]
+import VAquarium from '@/components/VAquarium.vue'
+import { onMounted } from 'vue'
+import { useFishStore } from './stores/fish'
+import VFishList from './components/VFishList.vue'
+import VLoading from './components/ui/VLoading.vue'
+
+const fishStore = useFishStore()
 
 const tableHeaders = [
   { key: 'name', label: 'Fish Name' },
   { key: 'type', label: 'Type' },
-  { key: 'weight', label: 'Weight' },
+  { key: 'weight', label: 'Weight'},
   { key: 'lastFeed', label: 'Last Feed' },
   { key: 'health', label: 'Health' },
+  {key: 'actions', label: 'Actions'}
 ]
 
-const handleAction = (item: Record<string, string>) => {
-  console.log(item)
-}
+
+onMounted(() => {
+  fishStore.getFishList()
+})
 </script>
 
 <template>
-  <AquariumBase />
-  <VTable
-    :headers="tableHeaders"
-    :data="fishData"
-    :actions="[{ label: 'Feed' }]"
-    @action="handleAction"
-  />
+  <template v-if="fishStore.isLoading">
+    <VLoading />
+  </template>
+  <template v-else>
+    <VAquarium />
+    <VFishList :headers="tableHeaders" :data="fishStore.fishList" />
+  </template>
 </template>

@@ -1,16 +1,15 @@
 <script setup lang="ts">
+import type { IFish } from '@/types/fish';
+import { getHealthStatusText } from '@/util/fishUtils';
 import { defineProps } from 'vue'
 
 defineProps<{
   headers: { key: string; label: string }[]
-  data: Record<string, string>[]
-  actions?: {
-    label: string
-  }[]
+  data: IFish[]
 }>()
 
 const emit = defineEmits<{
-  (e: 'action', item: Record<string, string>): void
+  (e: 'action', item: IFish): void
 }>()
 </script>
 
@@ -22,22 +21,22 @@ const emit = defineEmits<{
           <th v-for="header in headers" :key="header.key">
             {{ header.label }}
           </th>
-           <th v-if="actions?.length">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(row, index) in data" :key="index">
-          <td v-for="header in headers" :key="header.key">
-            {{ row[header.key] }}
-          </td>
-          <td v-if="actions?.length" class="actions">
+          <td>{{ row.name }}</td>
+          <td>{{ row.type }}</td>
+          <td>{{ row.weight }}</td>
+          <td>{{ row.feedingSchedule.lastFeed }}</td>
+          <td>{{ getHealthStatusText(row.health) }}</td>
+          <td>
             <button
-              v-for="action in actions"
-              :key="action.label"
+              :key="index"
               class="action-btn"
-              @click="emit('action', row)"
+              @click="() => emit('action', row)"
             >
-              {{ action.label }}
+              Feed
             </button>
           </td>
         </tr>

@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import AquariumBubbles from '@/components/AquariumBubbles.vue'
-import FishItem from '@/components/FishItem.vue'
+import VAquariumBubbles from '@/components/VAquariumBubbles.vue'
+import VFish from '@/components/VFish.vue'
+import { useFishStore } from '@/stores/fish';
+
+const fishStore = useFishStore()
 </script>
 
 <template>
   <div class="aquarium-container">
     <div class="aquarium">
-      <AquariumBubbles />
-      <FishItem />
+      <VAquariumBubbles />
+      <template v-for="(item,index) in fishStore.fishList" :key="index">
+        <div>
+          <VFish :fish="item" />
+        </div>
+      </template>
     </div>
   </div>
 </template>
