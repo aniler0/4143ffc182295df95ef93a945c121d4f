@@ -2,7 +2,6 @@
 import { useFishStore } from '@/stores/fishStore'
 import { useTimeStore } from '@/stores/timeStore'
 import { formatTimeDifference, getHealthStatusText } from '@/util/fishUtils'
-import { computed } from 'vue'
 
 const fishStore = useFishStore()
 const timeStore = useTimeStore()
@@ -45,11 +44,6 @@ const columns = [
     width: '15%',
   },
 ]
-
-const getTimeDifference = computed(() => {
-  return (lastFeedFullTime: Date) =>
-    formatTimeDifference(timeStore.currentDateTime, lastFeedFullTime)
-})
 </script>
 
 <template>
@@ -65,7 +59,12 @@ const getTimeDifference = computed(() => {
       </template>
       <template v-if="column.key === 'weight'"> {{ record.weight }}g </template>
       <template v-if="column.key === 'lastFeed'">
-        <p>{{ getTimeDifference(record.feedingSchedule.lastFeedFullTime) }} ago</p>
+        <p>
+          {{
+            formatTimeDifference(timeStore.currentDateTime, record.feedingSchedule.lastFeedFullTime)
+          }}
+          ago
+        </p>
       </template>
       <template v-if="column.key === 'health'">
         {{ getHealthStatusText(record.health) }}

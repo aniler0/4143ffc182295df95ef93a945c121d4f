@@ -11,27 +11,6 @@ export function getHealthStatusText(status: HealthStatusEnum): string {
     }
 }
 
-export function getLastFeedTimeFormatted(lastFeedTime: string, currentDateTime: Date): string {
-    const [hours, minutes] = lastFeedTime.split(':').map(Number)
-
-    const feedDate = new Date(currentDateTime)
-    feedDate.setHours(hours, minutes)
-
-    if (feedDate > currentDateTime) {
-        feedDate.setDate(feedDate.getDate() - 1)
-    }
-
-    const diffInMinutes = Math.floor((currentDateTime.getTime() - feedDate.getTime()) / (1000 * 60))
-
-    if (diffInMinutes < 60) {
-        return `${diffInMinutes} minutes`
-    }
-
-    // Calculate total hours, rounding up
-    const totalHours = Math.ceil(diffInMinutes / 60)
-    return `${totalHours} hours`
-}
-
 export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date): string {
     const diffInMinutes = Math.floor(
         (currentTime.getTime() - lastFeedFullTime.getTime()) / (1000 * 60)
