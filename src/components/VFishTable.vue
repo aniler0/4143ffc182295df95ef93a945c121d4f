@@ -2,7 +2,7 @@
 import { useFishStore } from '@/stores/fishStore'
 import { useTimeStore } from '@/stores/timeStore'
 import type { IFish } from '@/types/fish'
-import { checkFishHealth, formatTimeDifference, getHealthStatusText } from '@/util/fishUtils'
+import { checkFishHealthByTime, formatTimeDifference, getHealthStatusText, getMealCount } from '@/util/fishUtils'
 import { watch } from 'vue'
 
 const fishStore = useFishStore()
@@ -47,12 +47,16 @@ const columns = [
   },
 ]
 
+const onClickFeed = (fish: IFish) => {
+  fishStore.feedFish(fish.id)
+}
+
 watch(
   () => timeStore.currentDateTime,
   (newTime) => {
     fishStore.fishList = fishStore.fishList.map((fish: IFish) => ({
       ...fish,
-      health: checkFishHealth(fish, newTime),
+      health: checkFishHealthByTime(fish, newTime),
     }))
   },
 )
@@ -82,7 +86,8 @@ watch(
         {{ getHealthStatusText(record.health) }}
       </template>
       <template v-if="column.key === 'actions'">
-        <a-button type="primary" @click="fishStore.feedFish(record.id)">Feed</a-button>
+        <p>{{ getMealCount(record) }}</p>
+        <a-button type="primary" @click="onClickFeed(record)">Feed</a-button>
       </template>
     </template>
   </a-table>

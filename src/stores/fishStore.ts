@@ -1,11 +1,12 @@
 import { useFetch } from '@/composables/useFetch'
 import { HealthStatusEnum, type IFish, type IFishResponse } from '@/types/fish'
-import { fishTypeToImageSelector } from '@/util/fishUtils'
+import { checkFishHealthByTime, fishTypeToImageSelector } from '@/util/fishUtils'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useTimeStore } from './timeStore'
 
 const API_URL = import.meta.env.VITE_FISH_API_URL
+
 const TIME_FORMAT: Intl.DateTimeFormatOptions = {
   hour: '2-digit',
   minute: '2-digit',
@@ -15,13 +16,13 @@ const TIME_FORMAT: Intl.DateTimeFormatOptions = {
 export const useFishStore = defineStore('fish', () => {
   const fishList = ref<IFish[]>([])
   const { data, error, isLoading, fetchData } = useFetch<IFishResponse[]>()
+  const timeStore = useTimeStore()
 
   const getFishList = async () => {
     try {
       await fetchData(API_URL)
       if (!data.value) return
 
-      const timeStore = useTimeStore()
       const currentDate = timeStore.currentDateTime
       fishList.value = data.value.map(fish => mapFishData(fish, currentDate))
     } catch (err) {
@@ -44,7 +45,7 @@ export const useFishStore = defineStore('fish', () => {
   const mapFishData = (fish: IFishResponse, currentDate: Date): IFish => {
     const lastFeedFullTime = createLastFeedTime(fish.feedingSchedule.lastFeed, currentDate)
 
-    return {
+    const mappedFish = {
       ...fish,
       fishImage: fishTypeToImageSelector(fish.type),
       health: HealthStatusEnum.Healty,
@@ -53,16 +54,23 @@ export const useFishStore = defineStore('fish', () => {
         lastFeedFullTime
       }
     }
+
+    return {
+      ...mappedFish,
+      health: checkFishHealthByTime(mappedFish, currentDate)
+    }
   }
 
-  const updateFishFeeding = (fish: IFish, currentTime: string, now: Date): IFish => ({
-    ...fish,
-    feedingSchedule: {
-      ...fish.feedingSchedule,
-      lastFeed: currentTime,
-      lastFeedFullTime: new Date(now)
+  const updateFishFeeding = (fish: IFish, currentTime: string, now: Date): IFish => {
+    return {
+      ...fish,
+      feedingSchedule: {
+        ...fish.feedingSchedule,
+        lastFeed: currentTime,
+        lastFeedFullTime: new Date(now)
+      }
     }
-  })
+  }
 
   const feedFish = (fishId: string) => {
     const timeStore = useTimeStore()
@@ -72,11 +80,16 @@ export const useFishStore = defineStore('fish', () => {
     const fishIndex = fishList.value.findIndex(fish => fish.id === fishId)
     if (fishIndex === -1) return
 
-    fishList.value[fishIndex] = updateFishFeeding(
+    const updatedFish = updateFishFeeding(
       fishList.value[fishIndex],
       currentTime,
       now
     )
+
+    // Update health status immediately after feeding
+    updatedFish.health = checkFishHealthByTime(updatedFish, now)
+
+    fishList.value[fishIndex] = updatedFish
   }
 
   return { fishList, isLoading, error, getFishList, feedFish }

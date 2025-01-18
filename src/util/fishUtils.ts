@@ -52,7 +52,7 @@ export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date):
     return `${hours} ${hourText} ${minutes} ${minuteText}`
 }
 
-export const checkFishHealth = (fish: IFish, currentTime: Date): HealthStatusEnum => {
+export const checkFishHealthByTime = (fish: IFish, currentTime: Date): HealthStatusEnum => {
     const hoursSinceLastFeed = (currentTime.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60 * 60);
     const interval = fish.feedingSchedule.intervalInHours;
     const minutesLate = Math.floor((hoursSinceLastFeed - interval) * 60);
@@ -67,3 +67,12 @@ export const checkFishHealth = (fish: IFish, currentTime: Date): HealthStatusEnu
     return HealthStatusEnum.Healty;
 }
 
+export const getMealCount = (fish: IFish): string => {
+    const mealCount = Math.round(24 / fish.feedingSchedule.intervalInHours);
+    const fishWeight = fish.weight;
+    const feedPerGram = 0.01;
+
+    const totalFeedPerDay = fishWeight * feedPerGram;
+    const feedAmountPerInterval = totalFeedPerDay / mealCount;
+    return `${Number(feedAmountPerInterval.toFixed(4))}g x ${mealCount} times`;
+}
