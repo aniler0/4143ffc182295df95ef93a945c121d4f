@@ -29,7 +29,7 @@ const fishStore = useFishStore()
   position: relative;
   width: 100%;
   height: 550px;
-  background-image: url('../assets/images/aquarium-background.jpg');
+  background-image: url('/images/aquarium-background.jpg');
   background-size: cover;
   background-position: center 30%;
   border-radius: 20px;
