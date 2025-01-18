@@ -12,7 +12,6 @@ export const useFishStore = defineStore('fish', () => {
   const fishList = ref<IFish[]>([])
   const { data, error, isLoading, fetchData } = useFetch<IFishResponse[]>()
   const timeStore = useTimeStore()
-  const lastFeedTimes = ref(new Map<string, Date>())  // Track last status update time per fish
 
   const getFishList = async () => {
     try {
@@ -69,7 +68,6 @@ export const useFishStore = defineStore('fish', () => {
     const minuteSinceLastFeed = (currentDate.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60)
     const intervalInMinutes = fish.feedingSchedule.intervalInHours * 60
 
-
     const wasHungry = minuteSinceLastFeed > (intervalInMinutes - FEED_TOLERANCE_MINUTES)
     // Update last feed time
     fish.feedingSchedule.lastFeedFullTime = currentDate
@@ -83,9 +81,6 @@ export const useFishStore = defineStore('fish', () => {
     } else {
       fish.health -= 1
     }
-
-    // Store the time of this health update
-    lastFeedTimes.value.set(fishId, currentDate)
   }
   return { fishList, isLoading, error, getFishList, feedFish }
 })
