@@ -25,7 +25,7 @@ export function getHealthStatusText(status: HealthStatusEnum): string {
             return 'Critical'
         case HealthStatusEnum.Normal:
             return 'Normal'
-        case HealthStatusEnum.Healty:
+        case HealthStatusEnum.Healthy:
             return 'Healthy'
     }
 }
@@ -55,16 +55,58 @@ export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date):
 export const checkFishHealthByTime = (fish: IFish, currentTime: Date): HealthStatusEnum => {
     const hoursSinceLastFeed = (currentTime.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60 * 60);
     const interval = fish.feedingSchedule.intervalInHours;
-    const minutesLate = Math.floor((hoursSinceLastFeed - interval) * 60);
+
+    if (fish.health === HealthStatusEnum.Dead) {
+        return HealthStatusEnum.Dead;  // Dead fish stays dead
+    }
 
     if (hoursSinceLastFeed > interval * 3) {
         return HealthStatusEnum.Dead;
-    } else if (hoursSinceLastFeed > interval * 2) {
+    }
+
+    if (hoursSinceLastFeed > interval * 2) {
         return HealthStatusEnum.Critical;
-    } else if (minutesLate > 10) {
+    }
+
+    if (hoursSinceLastFeed > interval) {
         return HealthStatusEnum.Normal;
     }
-    return HealthStatusEnum.Healty;
+
+    return fish.health;  // Maintain current health if within feeding interval
+}
+
+export const updateFishHealthByFeeding = (fish: IFish, currentTime: Date): HealthStatusEnum => {
+    const hoursSinceLastFeed = (currentTime.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60 * 60);
+    const wasHungry = hoursSinceLastFeed > fish.feedingSchedule.intervalInHours;
+    if (wasHungry) {
+        // Improve health by one step if hungry
+        switch (fish.health) {
+            case HealthStatusEnum.Dead:
+                return HealthStatusEnum.Dead; // Dead fish stays dead
+            case HealthStatusEnum.Critical:
+                return HealthStatusEnum.Normal;
+            case HealthStatusEnum.Normal:
+                return HealthStatusEnum.Healthy;
+            case HealthStatusEnum.Healthy:
+                return HealthStatusEnum.Healthy;
+            default:
+                return fish.health;
+        }
+    } else {
+        // Decrease health by one step if not hungry (overfeeding)
+        switch (fish.health) {
+            case HealthStatusEnum.Dead:
+                return HealthStatusEnum.Dead;
+            case HealthStatusEnum.Critical:
+                return HealthStatusEnum.Dead;
+            case HealthStatusEnum.Normal:
+                return HealthStatusEnum.Critical;
+            case HealthStatusEnum.Healthy:
+                return HealthStatusEnum.Normal;
+            default:
+                return fish.health;
+        }
+    }
 }
 
 export const getMealCount = (fish: IFish): string => {

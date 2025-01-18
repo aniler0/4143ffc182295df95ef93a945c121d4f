@@ -20,7 +20,7 @@ export enum HealthStatusEnum {
     Dead = -1,
     Critical = 0,
     Normal = 1,
-    Healty = 2,
+    Healthy = 2,
 }
 
 export interface FeedingSchedule {

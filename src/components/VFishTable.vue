@@ -54,10 +54,16 @@ const onClickFeed = (fish: IFish) => {
 watch(
   () => timeStore.currentDateTime,
   (newTime) => {
-    fishStore.fishList = fishStore.fishList.map((fish: IFish) => ({
-      ...fish,
-      health: checkFishHealthByTime(fish, newTime),
-    }))
+    fishStore.fishList = fishStore.fishList.map((fish: IFish) => {
+      // Only check health if enough time has passed since last feed
+      if (fishStore.shouldUpdateHealth(fish.id, newTime)) {
+        return {
+          ...fish,
+          health: checkFishHealthByTime(fish, newTime),
+        }
+      }
+      return fish
+    })
   },
 )
 </script>

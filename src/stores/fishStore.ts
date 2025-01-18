@@ -7,16 +7,12 @@ import { useTimeStore } from './timeStore'
 
 const API_URL = import.meta.env.VITE_FISH_API_URL
 
-const TIME_FORMAT: Intl.DateTimeFormatOptions = {
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false
-}
 
 export const useFishStore = defineStore('fish', () => {
   const fishList = ref<IFish[]>([])
   const { data, error, isLoading, fetchData } = useFetch<IFishResponse[]>()
   const timeStore = useTimeStore()
+  const lastFeedTimes = ref(new Map<string, Date>())  // Track last status update time per fish
 
   const getFishList = async () => {
     try {
@@ -48,7 +44,7 @@ export const useFishStore = defineStore('fish', () => {
     const mappedFish = {
       ...fish,
       fishImage: fishTypeToImageSelector(fish.type),
-      health: HealthStatusEnum.Healty,
+      health: HealthStatusEnum.Healthy,
       feedingSchedule: {
         ...fish.feedingSchedule,
         lastFeedFullTime
@@ -61,36 +57,60 @@ export const useFishStore = defineStore('fish', () => {
     }
   }
 
-  const updateFishFeeding = (fish: IFish, currentTime: string, now: Date): IFish => {
-    return {
-      ...fish,
-      feedingSchedule: {
-        ...fish.feedingSchedule,
-        lastFeed: currentTime,
-        lastFeedFullTime: new Date(now)
-      }
-    }
-  }
 
   const feedFish = (fishId: string) => {
-    const timeStore = useTimeStore()
-    const now = timeStore.currentDateTime
-    const currentTime = now.toLocaleTimeString('en-GB', TIME_FORMAT)
+    const fish = fishList.value.find(fish => fish.id === fishId)
+    if (!fish) return
 
-    const fishIndex = fishList.value.findIndex(fish => fish.id === fishId)
-    if (fishIndex === -1) return
+    const currentDate = timeStore.currentDateTime
 
-    const updatedFish = updateFishFeeding(
-      fishList.value[fishIndex],
-      currentTime,
-      now
-    )
+    // Store the current health status before feeding
+    const previousHealth = fish.health
 
-    // Update health status immediately after feeding
-    updatedFish.health = checkFishHealthByTime(updatedFish, now)
+    // Calculate if fish was hungry before feeding
+    const hoursSinceLastFeed = (currentDate.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60 * 60)
+    const wasHungry = hoursSinceLastFeed > fish.feedingSchedule.intervalInHours
 
-    fishList.value[fishIndex] = updatedFish
+    // Update last feed time
+    fish.feedingSchedule.lastFeedFullTime = currentDate
+
+    // Update health based on previous status and hunger
+    if (wasHungry) {
+      switch (previousHealth) {
+        case HealthStatusEnum.Critical:
+          fish.health = HealthStatusEnum.Normal
+          break
+        case HealthStatusEnum.Normal:
+          fish.health = HealthStatusEnum.Healthy
+          break
+      }
+    } else {
+      // Overfeeding case
+      switch (previousHealth) {
+        case HealthStatusEnum.Healthy:
+          fish.health = HealthStatusEnum.Normal
+          break
+        case HealthStatusEnum.Normal:
+          fish.health = HealthStatusEnum.Critical
+          break
+        case HealthStatusEnum.Critical:
+          fish.health = HealthStatusEnum.Dead
+          break
+      }
+    }
+
+    // Store the time of this health update
+    lastFeedTimes.value.set(fishId, currentDate)
   }
 
-  return { fishList, isLoading, error, getFishList, feedFish }
+
+  const shouldUpdateHealth = (fishId: string, currentTime: Date) => {
+    const lastUpdate = lastFeedTimes.value.get(fishId)
+    if (!lastUpdate) return true
+
+    // Only update health if it's been at least 1 second since last feed/update
+    return (currentTime.getTime() - lastUpdate.getTime()) >= 1000
+  }
+
+  return { fishList, isLoading, error, getFishList, feedFish, shouldUpdateHealth }
 })
