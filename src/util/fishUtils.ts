@@ -1,4 +1,4 @@
-import { HealthStatusEnum } from "@/types/fish"
+import { HealthStatusEnum, type IFish } from "@/types/fish"
 
 export function fishTypeToImageSelector(type: string): string {
     switch (type) {
@@ -19,6 +19,8 @@ export function fishTypeToImageSelector(type: string): string {
 
 export function getHealthStatusText(status: HealthStatusEnum): string {
     switch (status) {
+        case HealthStatusEnum.Dead:
+            return 'Dead'
         case HealthStatusEnum.Critical:
             return 'Critical'
         case HealthStatusEnum.Normal:
@@ -33,10 +35,35 @@ export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date):
         (currentTime.getTime() - lastFeedFullTime.getTime()) / (1000 * 60)
     )
 
-    if (diffInMinutes < 60) {
-        return `${diffInMinutes} minutes`
+    const hours = Math.floor(diffInMinutes / 60)
+    const minutes = diffInMinutes % 60
+
+    const hourText = hours === 1 ? 'hour' : 'hours'
+    const minuteText = minutes === 1 ? 'minute' : 'minutes'
+
+    if (hours === 0) {
+        return `${minutes} ${minuteText}`
     }
 
-    const totalHours = Math.ceil(diffInMinutes / 60)
-    return `${totalHours} hours`
+    if (minutes === 0) {
+        return `${hours} ${hourText}`
+    }
+
+    return `${hours} ${hourText} ${minutes} ${minuteText}`
 }
+
+export const checkFishHealth = (fish: IFish, currentTime: Date): HealthStatusEnum => {
+    const hoursSinceLastFeed = (currentTime.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60 * 60);
+    const interval = fish.feedingSchedule.intervalInHours;
+    const minutesLate = Math.floor((hoursSinceLastFeed - interval) * 60);
+
+    if (hoursSinceLastFeed > interval * 3) {
+        return HealthStatusEnum.Dead;
+    } else if (hoursSinceLastFeed > interval * 2) {
+        return HealthStatusEnum.Critical;
+    } else if (minutesLate > 10) {
+        return HealthStatusEnum.Normal;
+    }
+    return HealthStatusEnum.Healty;
+}
+

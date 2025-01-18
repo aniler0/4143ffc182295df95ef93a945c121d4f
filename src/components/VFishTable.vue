@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useFishStore } from '@/stores/fishStore'
 import { useTimeStore } from '@/stores/timeStore'
-import { formatTimeDifference, getHealthStatusText } from '@/util/fishUtils'
+import type { IFish } from '@/types/fish'
+import { checkFishHealth, formatTimeDifference, getHealthStatusText } from '@/util/fishUtils'
+import { watch } from 'vue'
 
 const fishStore = useFishStore()
 const timeStore = useTimeStore()
@@ -44,6 +46,16 @@ const columns = [
     width: '15%',
   },
 ]
+
+watch(
+  () => timeStore.currentDateTime,
+  (newTime) => {
+    fishStore.fishList = fishStore.fishList.map((fish: IFish) => ({
+      ...fish,
+      health: checkFishHealth(fish, newTime),
+    }))
+  },
+)
 </script>
 
 <template>
