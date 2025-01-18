@@ -69,13 +69,16 @@ export const useFishStore = defineStore('fish', () => {
 
     // Calculate if fish was hungry before feeding
     const hoursSinceLastFeed = (currentDate.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60 * 60)
-    const wasHungry = hoursSinceLastFeed > fish.feedingSchedule.intervalInHours
+    const toleranceWindow = 10 / 60; // 10 minutes in hours
+    const idealTimeWindow = fish.feedingSchedule.intervalInHours;
+    const idealFeedingTime = Math.abs(hoursSinceLastFeed - idealTimeWindow) <= toleranceWindow;
+    
 
     // Update last feed time
     fish.feedingSchedule.lastFeedFullTime = currentDate
 
     // Update health based on previous status and hunger
-    if (wasHungry) {
+    if (idealFeedingTime) {
       switch (previousHealth) {
         case HealthStatusEnum.Critical:
           fish.health = HealthStatusEnum.Normal
