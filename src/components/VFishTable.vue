@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useFishStore } from '@/stores/fishStore'
 import { useTimeStore } from '@/stores/timeStore'
-import type { IFish } from '@/types/fish'
+import { HealthStatusEnum, type IFish } from '@/types/fish'
 import { checkFishHealthByTime, formatTimeDifference, getHealthStatusText, getMealCount } from '@/util/fishUtils'
 import { watch } from 'vue'
 
@@ -55,14 +55,10 @@ watch(
   () => timeStore.currentDateTime,
   (newTime) => {
     fishStore.fishList = fishStore.fishList.map((fish: IFish) => {
-      // Only check health if enough time has passed since last feed
-      if (fishStore.shouldUpdateHealth(fish.id, newTime)) {
         return {
           ...fish,
           health: checkFishHealthByTime(fish, newTime),
         }
-      }
-      return fish
     })
   },
 )
@@ -93,7 +89,7 @@ watch(
       </template>
       <template v-if="column.key === 'actions'">
         <p>{{ getMealCount(record) }}</p>
-        <a-button type="primary" @click="onClickFeed(record)">Feed</a-button>
+        <a-button type="primary" @click="onClickFeed(record)" :disabled="record.health === HealthStatusEnum.Dead">Feed</a-button>
       </template>
     </template>
   </a-table>

@@ -64,59 +64,28 @@ export const useFishStore = defineStore('fish', () => {
     if (!fish) return
 
     const currentDate = timeStore.currentDateTime
-
-    // Store the current health status before feeding
-    const previousHealth = fish.health
-
+    const FEED_TOLERANCE_MINUTES = 10  // 10 minutes tolerance
     // Calculate if fish was hungry before feeding
-    const hoursSinceLastFeed = (currentDate.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60 * 60)
-    const toleranceWindow = 10 / 60; // 10 minutes in hours
-    const idealTimeWindow = fish.feedingSchedule.intervalInHours;
-    const idealFeedingTime = Math.abs(hoursSinceLastFeed - idealTimeWindow) <= toleranceWindow;
-    
+    const minuteSinceLastFeed = (currentDate.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60)
+    const intervalInMinutes = fish.feedingSchedule.intervalInHours * 60
 
+
+    const wasHungry = minuteSinceLastFeed > (intervalInMinutes - FEED_TOLERANCE_MINUTES)
     // Update last feed time
     fish.feedingSchedule.lastFeedFullTime = currentDate
     fish.feedingSchedule.healthScheduleTime = new Date(currentDate)
 
     // Update health based on previous status and hunger
-    if (idealFeedingTime) {
-      switch (previousHealth) {
-        case HealthStatusEnum.Critical:
-          fish.health = HealthStatusEnum.Normal
-          break
-        case HealthStatusEnum.Normal:
-          fish.health = HealthStatusEnum.Healthy
-          break
+    if (wasHungry) {
+      if (fish.health !== HealthStatusEnum.Healthy) {
+        fish.health += 1
       }
     } else {
-      // Overfeeding case
-      switch (previousHealth) {
-        case HealthStatusEnum.Healthy:
-          fish.health = HealthStatusEnum.Normal
-          break
-        case HealthStatusEnum.Normal:
-          fish.health = HealthStatusEnum.Critical
-          break
-        case HealthStatusEnum.Critical:
-          fish.health = HealthStatusEnum.Dead
-          break
-      }
+      fish.health -= 1
     }
 
     // Store the time of this health update
     lastFeedTimes.value.set(fishId, currentDate)
   }
-
-
-  const shouldUpdateHealth = (fishId: string, currentTime: Date) => {
-    const lastUpdate = lastFeedTimes.value.get(fishId)
-    console.log('lastUpdate', lastUpdate);
-    if (!lastUpdate) return true
-
-    // Only update health if it's been at least 1 second since last feed/update
-    return (currentTime.getTime() - lastUpdate.getTime()) >= 1000
-  }
-
-  return { fishList, isLoading, error, getFishList, feedFish, shouldUpdateHealth }
+  return { fishList, isLoading, error, getFishList, feedFish }
 })
