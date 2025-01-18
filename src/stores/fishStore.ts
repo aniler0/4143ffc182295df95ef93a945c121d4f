@@ -47,7 +47,8 @@ export const useFishStore = defineStore('fish', () => {
       health: HealthStatusEnum.Healthy,
       feedingSchedule: {
         ...fish.feedingSchedule,
-        lastFeedFullTime
+        lastFeedFullTime,
+        healthScheduleTime: new Date(lastFeedFullTime)
       }
     }
 
@@ -76,6 +77,7 @@ export const useFishStore = defineStore('fish', () => {
 
     // Update last feed time
     fish.feedingSchedule.lastFeedFullTime = currentDate
+    fish.feedingSchedule.healthScheduleTime = new Date(currentDate)
 
     // Update health based on previous status and hunger
     if (idealFeedingTime) {
@@ -109,6 +111,7 @@ export const useFishStore = defineStore('fish', () => {
 
   const shouldUpdateHealth = (fishId: string, currentTime: Date) => {
     const lastUpdate = lastFeedTimes.value.get(fishId)
+    console.log('lastUpdate', lastUpdate);
     if (!lastUpdate) return true
 
     // Only update health if it's been at least 1 second since last feed/update

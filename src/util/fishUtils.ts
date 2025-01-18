@@ -53,23 +53,15 @@ export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date):
 }
 
 export const checkFishHealthByTime = (fish: IFish, currentTime: Date): HealthStatusEnum => {
-    const hoursSinceLastFeed = (currentTime.getTime() - fish.feedingSchedule.lastFeedFullTime.getTime()) / (1000 * 60 * 60);
+    const hoursSinceLastFeed = (currentTime.getTime() - fish.feedingSchedule.healthScheduleTime.getTime()) / (1000 * 60 * 60);
     const interval = fish.feedingSchedule.intervalInHours;
-
     if (fish.health === HealthStatusEnum.Dead) {
         return HealthStatusEnum.Dead;  // Dead fish stays dead
     }
 
-    if (hoursSinceLastFeed > interval * 3) {
-        return HealthStatusEnum.Dead;
-    }
-
-    if (hoursSinceLastFeed > interval * 2) {
-        return HealthStatusEnum.Critical;
-    }
-
-    if (hoursSinceLastFeed > interval) {
-        return HealthStatusEnum.Normal;
+    if(hoursSinceLastFeed >= interval) {
+        fish.feedingSchedule.healthScheduleTime = currentTime;
+        fish.health -= 1
     }
 
     return fish.health;  // Maintain current health if within feeding interval

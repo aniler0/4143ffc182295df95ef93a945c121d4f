@@ -12,7 +12,7 @@ export interface IFish {
     fishImage: string
     name: string
     weight: number
-    feedingSchedule: FeedingSchedule & { lastFeedFullTime: Date }
+    feedingSchedule: FeedingSchedule & { lastFeedFullTime: Date, healthScheduleTime: Date }
     health: number
 }
 
