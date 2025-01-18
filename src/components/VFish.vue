@@ -1,62 +1,118 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { IFish } from '@/types/fish'
+import { ref } from 'vue'
+
+const props = defineProps<{
+  fish: IFish
+}>()
+
+const emit = defineEmits(['fishHovered'])
+
+const TANK_HEIGHT = 550
+const FISH_HEIGHT = 100
+const PADDING = 50
+const SWIM_DURATION = 9
+
+const swimDuration = ref(SWIM_DURATION)
+const startingPosition = ref(Math.random() * 1000)
+const verticalPosition = ref(Math.random() * (TANK_HEIGHT - FISH_HEIGHT - 2 * PADDING) + PADDING)
+const isSwimmingLeft = ref(Math.random() > 0.5)
+const isHovered = ref(false)
+
+const handleFishHover = (event: MouseEvent) => {
+  isHovered.value = true
+  const rect = (event.target as HTMLElement).getBoundingClientRect()
+  emit('fishHovered', {
+    fish: props.fish,
+    position: {
+      x: rect.right,
+      y: rect.top
+    }
+  })
+}
+
+const handleFishLeave = () => {
+  isHovered.value = false
+}
+</script>
 
 <template>
-  <div class="fish">
-    <div class="eye"></div>
+  <div
+    class="fish"
+    :class="{
+      'swim-left': isSwimmingLeft,
+      'swim-right': !isSwimmingLeft,
+      paused: isHovered,
+    }"
+    @mouseenter="handleFishHover"
+    @mouseleave="handleFishLeave"
+  >
+    <img :src="fish.fishImage" class="fish-image" alt="fish" />
   </div>
 </template>
 
 <style scoped>
 .fish {
-  position: relative;
-  width: 120px;
-  height: 60px;
-  background: linear-gradient(45deg, #ff6b6b, #ff8787);
-  border-radius: 50px 80px 20px 50px;
-  transform: rotateY(180deg);
+  --duration: v-bind('swimDuration + "s"');
+  --start-pos: v-bind('startingPosition + "px"');
+  --y-pos: v-bind('verticalPosition + "px"');
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
 }
 
-.fish::before {
-  content: '';
-  position: absolute;
-  top: 15px;
-  right: -20px;
-  width: 30px;
-  height: 30px;
-  background: linear-gradient(45deg, #ff6b6b, #ff8787);
-  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+.fish-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-.fish::after {
-  content: '';
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 10px;
-  height: 40px;
-  background: linear-gradient(45deg, #ff6b6b, #ff8787);
-  border-radius: 50%;
-  transform: rotate(45deg);
+.paused {
+  animation-play-state: paused !important;
 }
 
-.eye {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: white;
-  border-radius: 50%;
-  top: 15px;
-  left: 25px;
+.swim-right {
+  animation: swimRight var(--duration) linear infinite;
 }
 
-.eye::after {
-  content: '';
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: black;
-  border-radius: 50%;
-  top: 3px;
-  left: 3px;
+.swim-left {
+  animation: swimLeft var(--duration) linear infinite;
+}
+
+@keyframes swimRight {
+  0% {
+    transform: translate(var(--start-pos), var(--y-pos)) scaleX(1);
+  }
+  45% {
+    transform: translate(1000px, var(--y-pos)) scaleX(1);
+  }
+  50% {
+    transform: translate(1000px, var(--y-pos)) scaleX(-1);
+  }
+  95% {
+    transform: translate(var(--start-pos), var(--y-pos)) scaleX(-1);
+  }
+  100% {
+    transform: translate(var(--start-pos), var(--y-pos)) scaleX(1);
+  }
+}
+
+@keyframes swimLeft {
+  0% {
+    transform: translate(var(--start-pos), var(--y-pos)) scaleX(-1);
+  }
+  45% {
+    transform: translate(0, var(--y-pos)) scaleX(-1);
+  }
+  50% {
+    transform: translate(0, var(--y-pos)) scaleX(1);
+  }
+  95% {
+    transform: translate(var(--start-pos), var(--y-pos)) scaleX(1);
+  }
+  100% {
+    transform: translate(var(--start-pos), var(--y-pos)) scaleX(-1);
+  }
 }
 </style>

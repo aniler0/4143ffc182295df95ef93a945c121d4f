@@ -3,13 +3,16 @@ import { HealthStatusEnum, type IFish, type IFishResponse } from '@/types/fish'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useTimeStore } from './timeStore'
+import { fishTypeToImageSelector } from '@/util/fishUtils'
+
+const URL = import.meta.env.VITE_FISH_API_URL
 
 export const useFishStore = defineStore('fish', () => {
   const fishList = ref<IFish[]>([])
   const { data, error, isLoading, fetchData } = useFetch<IFishResponse[]>()
 
   const getFishList = async () => {
-    await fetchData('https://run.mocky.io/v3/e80be173-df55-404b-833b-670e53a4743d')
+    await fetchData(URL)
     if (data.value) {
       const timeStore = useTimeStore()
       const currentDate = timeStore.currentDateTime
@@ -24,8 +27,11 @@ export const useFishStore = defineStore('fish', () => {
           lastFeedFullTime.setDate(lastFeedFullTime.getDate() - 1)
         }
 
+        
+
         return {
           ...fish,
+          fishImage: fishTypeToImageSelector(fish.type),
           health: HealthStatusEnum.Critical,
           feedingSchedule: {
             ...fish.feedingSchedule,

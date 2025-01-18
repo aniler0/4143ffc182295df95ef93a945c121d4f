@@ -9,6 +9,7 @@ export interface IFishResponse {
 export interface IFish {
     id: string
     type: string
+    fishImage: string
     name: string
     weight: number
     feedingSchedule: FeedingSchedule & { lastFeedFullTime: Date }

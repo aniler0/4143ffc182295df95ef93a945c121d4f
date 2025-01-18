@@ -11,9 +11,7 @@ const fishStore = useFishStore()
     <div class="aquarium">
       <VAquariumBubbles />
       <template v-for="(item, index) in fishStore.fishList" :key="index">
-        <div>
-          <VFish :fish="item" />
-        </div>
+        <VFish :fish="item" />
       </template>
     </div>
   </div>
@@ -30,10 +28,12 @@ const fishStore = useFishStore()
 .aquarium {
   position: relative;
   width: 100%;
-  height: 500px;
-  background: linear-gradient(180deg, #a2d2ff 0%, #4895ef 100%);
+  height: 550px;
+  background-image: url('../assets/images/aquarium-background.jpg');
+  background-size: cover;
+  background-position: center 30%;
   border-radius: 20px;
-  border: 15px solid #333;
+  border: 15px solid #4a4a4a;
   box-shadow:
     inset 0 0 50px rgba(255, 255, 255, 0.2),
     0 0 30px rgba(0, 0, 0, 0.3);
