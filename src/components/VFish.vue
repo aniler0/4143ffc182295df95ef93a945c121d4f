@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IFish } from '@/types/fish'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { HealthStatusEnum } from '@/types/fish'
 
 const props = defineProps<{
   fish: IFish
@@ -18,6 +19,13 @@ const startingPosition = ref(Math.random() * 1000)
 const verticalPosition = ref(Math.random() * (TANK_HEIGHT - FISH_HEIGHT - 2 * PADDING) + PADDING)
 const isSwimmingLeft = ref(Math.random() > 0.5)
 const isHovered = ref(false)
+
+const isDead = computed(() => props.fish.health === HealthStatusEnum.Dead)
+
+// Use top padding for dead fish
+const fishPosition = computed(() => 
+  isDead.value ? PADDING + 'px' : verticalPosition.value + 'px'
+)
 
 const handleFishHover = (event: MouseEvent) => {
   isHovered.value = true
@@ -40,9 +48,10 @@ const handleFishLeave = () => {
   <div
     class="fish"
     :class="{
-      'swim-left': isSwimmingLeft,
-      'swim-right': !isSwimmingLeft,
-      paused: isHovered,
+      'swim-left': isSwimmingLeft && !isDead,
+      'swim-right': !isSwimmingLeft && !isDead,
+      'dead': isDead,
+      'paused': isHovered || isDead,
     }"
     @mouseenter="handleFishHover"
     @mouseleave="handleFishLeave"
@@ -53,9 +62,10 @@ const handleFishLeave = () => {
 
 <style scoped>
 .fish {
+  --y-pos: v-bind('fishPosition');
   --duration: v-bind('swimDuration + "s"');
   --start-pos: v-bind('startingPosition + "px"');
-  --y-pos: v-bind('verticalPosition + "px"');
+
   position: absolute;
   width: 100px;
   height: 100px;
@@ -70,6 +80,12 @@ const handleFishLeave = () => {
 
 .paused {
   animation-play-state: paused !important;
+}
+
+.dead {
+  transform: translate(var(--start-pos), var(--y-pos)) rotate(180deg);
+  transition: transform 2s ease-out, filter 2s ease-out;
+  filter: grayscale(70%) opacity(0.75);
 }
 
 .swim-right {

@@ -1,9 +1,10 @@
-import { useFetch } from '@/composables/useFetch'
-import { HealthStatusEnum, type IFish, type IFishResponse } from '@/types/fish'
-import { checkFishHealthByTime, fishTypeToImageSelector } from '@/util/fishUtils'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { useTimeStore } from './timeStore'
+
+import { useFetch } from '@/composables/useFetch'
+import { useTimeStore } from '@/stores/timeStore'
+import { HealthStatusEnum, type IFish, type IFishResponse } from '@/types/fish'
+import { checkFishHealthByTime, fishTypeToImageSelector } from '@/util/fishUtils'
 
 const API_URL = import.meta.env.VITE_FISH_API_URL
 
@@ -18,8 +19,7 @@ export const useFishStore = defineStore('fish', () => {
       await fetchData(API_URL)
       if (!data.value) return
 
-      const currentDate = timeStore.currentDateTime
-      fishList.value = data.value.map(fish => mapFishData(fish, currentDate))
+      fishList.value = data.value.map(fish => mapFishData(fish))
     } catch (err) {
       console.error('Failed to fetch fish list:', err)
     }
@@ -37,7 +37,8 @@ export const useFishStore = defineStore('fish', () => {
     return lastFeedTime
   }
 
-  const mapFishData = (fish: IFishResponse, currentDate: Date): IFish => {
+  const mapFishData = (fish: IFishResponse): IFish => {
+    const currentDate = timeStore.currentDateTime
     const lastFeedFullTime = createLastFeedTime(fish.feedingSchedule.lastFeed, currentDate)
 
     const mappedFish = {
