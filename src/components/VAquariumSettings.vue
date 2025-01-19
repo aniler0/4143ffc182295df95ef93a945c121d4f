@@ -21,12 +21,13 @@ const onChangeTimeSpeed = (value: SelectValue) => {
                 <Text strong>Time of Aquarium</Text>
               </Col>
               <Col
-                ><Text>{{ timeStore.formattedDateTime }}</Text>
+                ><Text test-id="formatted-time-test">{{ timeStore.formattedDateTime }}</Text>
               </Col>
             </Col>
             <Col :span="12">
               <Row type="flex" justify="end" align="middle">
                 <Select
+                  test-id="time-speed-select"
                   v-model:value="timeStore.timeSpeed"
                   style="width: 140px; margin: 8px 0"
                   @change="onChangeTimeSpeed"
