@@ -1,25 +1,32 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-
 import { FISH_HEIGHT, PADDING, SWIM_DURATION, TANK_HEIGHT } from '@/constants/fish-constants'
 import type { IFish } from '@/types/fish'
 import { HealthStatusEnum } from '@/types/fish'
 
-const props = defineProps<{
+// Props
+interface Props {
   fish: IFish
   hovered: string
-}>()
+}
+const props = defineProps<Props>()
 
+// Animation states
 const swimDuration = ref(SWIM_DURATION)
-const startingPosition = ref(Math.random() * 1000)
-const verticalPosition = ref(Math.random() * (TANK_HEIGHT - FISH_HEIGHT - 2 * PADDING) + PADDING)
 const isSwimmingLeft = ref(Math.random() > 0.5)
 
+// Position states
+const startingPosition = ref(Math.random() * 1000)
+const verticalPosition = ref(
+  Math.random() * (TANK_HEIGHT - FISH_HEIGHT - 2 * PADDING) + PADDING
+)
+
+// Computed properties
 const isPaused = computed(() => props.hovered === props.fish.id)
 const isDead = computed(() => props.fish.health === HealthStatusEnum.DEAD)
-
-// Use top padding for dead fish
-const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPosition.value + 'px'))
+const fishPosition = computed(() =>
+  isDead.value ? `${PADDING}px` : `${verticalPosition.value}px`
+)
 </script>
 
 <template>
@@ -28,16 +35,21 @@ const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPos
     :class="{
       'swim-left': isSwimmingLeft && !isDead,
       'swim-right': !isSwimmingLeft && !isDead,
-      dead: isDead,
-      paused: isPaused,
-      hovered: props.hovered === props.fish.id,
+      'dead': isDead,
+      'paused': isPaused,
+      'hovered': hovered === fish.id,
     }"
   >
-    <img :src="fish.fishImage" class="fish-image" alt="fish" />
+    <img
+      :src="fish.fishImage"
+      class="fish-image"
+      :alt="`${fish.name} fish`"
+    />
   </div>
 </template>
 
 <style scoped>
+/* CSS Variables */
 .fish {
   --y-pos: v-bind('fishPosition');
   --duration: v-bind('swimDuration + "s"');
@@ -50,12 +62,14 @@ const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPos
   z-index: 1;
 }
 
+/* Base styles */
 .fish-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
+/* State modifiers */
 .hovered {
   z-index: 100;
   pointer-events: auto;
@@ -68,12 +82,11 @@ const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPos
 .dead {
   z-index: 0;
   transform: translate(var(--start-pos), var(--y-pos)) rotate(180deg);
-  transition:
-    transform 2s ease-out,
-    filter 2s ease-out;
+  transition: transform 2s ease-out, filter 2s ease-out;
   filter: grayscale(70%) opacity(0.75);
 }
 
+/* Animation classes */
 .swim-right {
   animation: swimRight var(--duration) linear infinite;
 }
@@ -82,6 +95,7 @@ const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPos
   animation: swimLeft var(--duration) linear infinite;
 }
 
+/* Swimming animations */
 @keyframes swimRight {
   0% {
     transform: translate(var(--start-pos), var(--y-pos)) scaleX(1);

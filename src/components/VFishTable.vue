@@ -39,9 +39,9 @@ watch(
   <Table :dataSource="fishStore.fishList" :columns="TABLE_COLUNMNS" :pagination="false">
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
-        <p>
+        <Text>
           {{ record.name }}
-        </p>
+        </Text>
       </template>
       <template v-if="column.key === 'type'">
         {{ record.type }}
