@@ -25,7 +25,7 @@ export const useFishStore = defineStore('fish', () => {
     }
   }
 
-  const feedFish = (fishId: string,amount:number) => {
+  const feedFish = (fishId: string, amount: number) => {
     const fish = fishList.value.find(fish => fish.id === fishId)
     if (!fish) return
 
@@ -42,7 +42,6 @@ export const useFishStore = defineStore('fish', () => {
       fish.feedingSchedule.intervalInHours * 60,
       FEED_TOLERANCE_MINUTES
     )
-    
     // Update fish health based on both timing and amount
     fish.health = updateFishHealth(
       fish.health,

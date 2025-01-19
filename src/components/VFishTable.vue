@@ -28,7 +28,7 @@ const updatedFishList = computed(() => {
   return fishStore.fishList.map((fish: IFish) => {
     // Initialize meal amount if not set
     if (!mealAmounts.value.has(fish.id)) {
-      mealAmounts.value.set(fish.id, Number(getMealAmountPerInterval(fish)))
+      mealAmounts.value.set(fish.id, getMealAmountPerInterval(fish))
     }
     return {
       ...fish,

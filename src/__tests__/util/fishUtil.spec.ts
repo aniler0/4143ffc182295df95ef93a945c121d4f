@@ -97,7 +97,7 @@ describe('fishUtils', () => {
       }
 
       expect(getDailyMealCount(fish)).toEqual(6)
-      expect(getMealAmountPerInterval(fish)).toEqual('0.167')
+      expect(getMealAmountPerInterval(fish)).toEqual(0.167)
     })
   })
 })

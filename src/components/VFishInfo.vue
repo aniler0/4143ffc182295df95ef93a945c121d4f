@@ -22,7 +22,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const handleFeed = () => {
-  fishStore.feedFish(props.fish.id, Number(getMealAmountPerInterval(props.fish)))
+  fishStore.feedFish(props.fish.id, getMealAmountPerInterval(props.fish))
 }
 </script>
 
