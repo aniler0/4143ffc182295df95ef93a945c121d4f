@@ -12,7 +12,6 @@ const activePopoverFishId = ref()
 
 // Function to handle popover visibility
 const handlePopoverVisibility = (fishId: string, visible: boolean) => {
-  console.log(visible);
   activePopoverFishId.value = visible ? fishId : null
 }
 </script>
