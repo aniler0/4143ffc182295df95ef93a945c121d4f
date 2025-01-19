@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button, Row, Table, Tag, Typography } from 'ant-design-vue'
-import { watch } from 'vue'
+import { computed } from 'vue'
 
 import { TABLE_COLUNMNS } from '@/constants/fish-table-constants'
 import { useFishStore } from '@/stores/fishStore'
@@ -22,21 +22,18 @@ const onClickFeed = (fish: IFish) => {
   fishStore.feedFish(fish.id)
 }
 
-watch(
-  () => timeStore.currentDateTime,
-  (newTime) => {
-    fishStore.fishList = fishStore.fishList.map((fish: IFish) => {
-      return {
-        ...fish,
-        health: checkFishHealthByTime(fish, newTime),
-      }
-    })
-  },
-)
+const updatedFishList = computed(() => {
+  return fishStore.fishList.map((fish: IFish) => {
+    return {
+      ...fish,
+      health: checkFishHealthByTime(fish, timeStore.currentDateTime),
+    }
+  })
+})
 </script>
 
 <template>
-  <Table :dataSource="fishStore.fishList" :columns="TABLE_COLUNMNS" :pagination="false">
+  <Table :dataSource="updatedFishList" :columns="TABLE_COLUNMNS" :pagination="false">
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
         <Text>

@@ -69,7 +69,7 @@ const handleFeed = () => {
 
 <style scoped>
 .fish-info-container {
-  width: 180px;
+  width: 240px;
 }
 
 .card-header {
