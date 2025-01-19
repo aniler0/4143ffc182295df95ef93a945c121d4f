@@ -5,9 +5,9 @@ import { computed, ref } from 'vue'
 
 const props = defineProps<{
   fish: IFish
+  hovered: string
 }>()
 
-const emit = defineEmits(['fishHovered'])
 
 const TANK_HEIGHT = 550
 const FISH_HEIGHT = 100
@@ -18,28 +18,14 @@ const swimDuration = ref(SWIM_DURATION)
 const startingPosition = ref(Math.random() * 1000)
 const verticalPosition = ref(Math.random() * (TANK_HEIGHT - FISH_HEIGHT - 2 * PADDING) + PADDING)
 const isSwimmingLeft = ref(Math.random() > 0.5)
-const isHovered = ref(false)
 
+const isPaused = computed(() => props.hovered === props.fish.id)
 const isDead = computed(() => props.fish.health === HealthStatusEnum.Dead)
 
 // Use top padding for dead fish
 const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPosition.value + 'px'))
 
-const handleFishHover = (event: MouseEvent) => {
-  isHovered.value = true
-  const rect = (event.target as HTMLElement).getBoundingClientRect()
-  emit('fishHovered', {
-    fish: props.fish,
-    position: {
-      x: rect.right,
-      y: rect.top,
-    },
-  })
-}
 
-const handleFishLeave = () => {
-  isHovered.value = false
-}
 </script>
 
 <template>
@@ -49,11 +35,9 @@ const handleFishLeave = () => {
       'swim-left': isSwimmingLeft && !isDead,
       'swim-right': !isSwimmingLeft && !isDead,
       dead: isDead,
-      paused: isHovered || isDead,
-      hovered: isHovered,
+      paused: isPaused,
+      hovered:  props.hovered === props.fish.id,
     }"
-    @mouseenter="handleFishHover"
-    @mouseleave="handleFishLeave"
   >
     <img :src="fish.fishImage" class="fish-image" alt="fish" />
   </div>

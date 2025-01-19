@@ -1,9 +1,20 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import VAquariumBubbles from '@/components/VAquariumBubbles.vue'
 import VFish from '@/components/VFish.vue'
 import { useFishStore } from '@/stores/fishStore'
+import VFishInfo from './VFishInfo.vue'
+import { Popover } from 'ant-design-vue'
 
 const fishStore = useFishStore()
+const activePopoverFishId = ref()
+
+// Function to handle popover visibility
+const handlePopoverVisibility = (fishId: string, visible: boolean) => {
+  console.log(visible);
+  activePopoverFishId.value = visible ? fishId : null
+}
 </script>
 
 <template>
@@ -11,7 +22,16 @@ const fishStore = useFishStore()
     <div class="aquarium">
       <VAquariumBubbles />
       <template v-for="(item, index) in fishStore.fishList" :key="index">
-        <VFish :fish="item" />
+        <Popover
+          :open="activePopoverFishId === item.id"
+          @openChange="(visible: boolean) => handlePopoverVisibility(item.id, visible)"
+          title="Fish Info"
+        >
+          <template #content>
+            <VFishInfo :fish="item" />
+          </template>
+          <VFish :fish="item" :hovered="activePopoverFishId"  />
+        </Popover>
       </template>
     </div>
   </div>

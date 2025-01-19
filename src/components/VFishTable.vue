@@ -5,9 +5,11 @@ import { HealthStatusEnum, type IFish } from '@/types/fish'
 import {
   checkFishHealthByTime,
   formatTimeDifference,
+  getHealthStatusColor,
   getHealthStatusText,
   getMealCount,
 } from '@/util/fishUtils'
+import { Tag } from 'ant-design-vue'
 import { watch } from 'vue'
 
 const fishStore = useFishStore()
@@ -90,7 +92,9 @@ watch(
         </p>
       </template>
       <template v-if="column.key === 'health'">
-        {{ getHealthStatusText(record.health) }}
+        <Tag :color="getHealthStatusColor(record.health)">
+          {{ getHealthStatusText(record.health) }}
+        </Tag>
       </template>
       <template v-if="column.key === 'actions'">
         <a-row justify="space-between" align="middle">
