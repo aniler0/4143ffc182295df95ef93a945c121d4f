@@ -75,5 +75,5 @@ export const getMealCount = (fish: IFish): string => {
 
     const totalFeedPerDay = fishWeight * feedPerGram;
     const feedAmountPerInterval = totalFeedPerDay / mealCount;
-    return `${Number(feedAmountPerInterval.toFixed(4))}g x ${mealCount} times`;
+    return `${Number(feedAmountPerInterval.toFixed(3))}g x ${mealCount} times`;
 }

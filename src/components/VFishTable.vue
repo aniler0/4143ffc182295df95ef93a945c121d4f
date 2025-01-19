@@ -2,7 +2,12 @@
 import { useFishStore } from '@/stores/fishStore'
 import { useTimeStore } from '@/stores/timeStore'
 import { HealthStatusEnum, type IFish } from '@/types/fish'
-import { checkFishHealthByTime, formatTimeDifference, getHealthStatusText, getMealCount } from '@/util/fishUtils'
+import {
+  checkFishHealthByTime,
+  formatTimeDifference,
+  getHealthStatusText,
+  getMealCount,
+} from '@/util/fishUtils'
 import { watch } from 'vue'
 
 const fishStore = useFishStore()
@@ -13,7 +18,7 @@ const columns = [
     title: 'Fish Name',
     dataIndex: 'name',
     key: 'name',
-    width: '20%',
+    width: '15%',
   },
   {
     title: 'Type',
@@ -25,19 +30,19 @@ const columns = [
     title: 'Weight',
     dataIndex: 'weight',
     key: 'weight',
-    width: '15%',
+    width: '10%',
   },
   {
     title: 'Last Feed',
     dataIndex: 'lastFeed',
     key: 'lastFeed',
-    width: '20%',
+    width: '15%',
   },
   {
     title: 'Health',
     dataIndex: 'health',
     key: 'health',
-    width: '15%',
+    width: '10%',
   },
   {
     title: 'Actions',
@@ -55,10 +60,10 @@ watch(
   () => timeStore.currentDateTime,
   (newTime) => {
     fishStore.fishList = fishStore.fishList.map((fish: IFish) => {
-        return {
-          ...fish,
-          health: checkFishHealthByTime(fish, newTime),
-        }
+      return {
+        ...fish,
+        health: checkFishHealthByTime(fish, newTime),
+      }
     })
   },
 )
@@ -88,8 +93,15 @@ watch(
         {{ getHealthStatusText(record.health) }}
       </template>
       <template v-if="column.key === 'actions'">
-        <p>{{ getMealCount(record) }}</p>
-        <a-button type="primary" @click="onClickFeed(record)" :disabled="record.health === HealthStatusEnum.Dead">Feed</a-button>
+        <a-row justify="space-between" align="middle">
+          <a-button
+            type="primary"
+            @click="onClickFeed(record)"
+            :disabled="record.health === HealthStatusEnum.Dead"
+            >Feed</a-button
+          >
+          <span>({{ getMealCount(record) }})</span>
+        </a-row>
       </template>
     </template>
   </a-table>

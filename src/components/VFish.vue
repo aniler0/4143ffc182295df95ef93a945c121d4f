@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IFish } from '@/types/fish'
-import { ref, computed } from 'vue'
 import { HealthStatusEnum } from '@/types/fish'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{
   fish: IFish
@@ -23,9 +23,7 @@ const isHovered = ref(false)
 const isDead = computed(() => props.fish.health === HealthStatusEnum.Dead)
 
 // Use top padding for dead fish
-const fishPosition = computed(() => 
-  isDead.value ? PADDING + 'px' : verticalPosition.value + 'px'
-)
+const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPosition.value + 'px'))
 
 const handleFishHover = (event: MouseEvent) => {
   isHovered.value = true
@@ -34,8 +32,8 @@ const handleFishHover = (event: MouseEvent) => {
     fish: props.fish,
     position: {
       x: rect.right,
-      y: rect.top
-    }
+      y: rect.top,
+    },
   })
 }
 
@@ -50,8 +48,9 @@ const handleFishLeave = () => {
     :class="{
       'swim-left': isSwimmingLeft && !isDead,
       'swim-right': !isSwimmingLeft && !isDead,
-      'dead': isDead,
-      'paused': isHovered || isDead,
+      dead: isDead,
+      paused: isHovered || isDead,
+      hovered: isHovered,
     }"
     @mouseenter="handleFishHover"
     @mouseleave="handleFishLeave"
@@ -70,6 +69,7 @@ const handleFishLeave = () => {
   width: 100px;
   height: 100px;
   cursor: pointer;
+  z-index: 1;
 }
 
 .fish-image {
@@ -78,13 +78,21 @@ const handleFishLeave = () => {
   object-fit: contain;
 }
 
+.hovered {
+  z-index: 100;
+  pointer-events: auto;
+}
+
 .paused {
   animation-play-state: paused !important;
 }
 
 .dead {
+  z-index: 0;
   transform: translate(var(--start-pos), var(--y-pos)) rotate(180deg);
-  transition: transform 2s ease-out, filter 2s ease-out;
+  transition:
+    transform 2s ease-out,
+    filter 2s ease-out;
   filter: grayscale(70%) opacity(0.75);
 }
 

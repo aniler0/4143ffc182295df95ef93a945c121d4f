@@ -19,9 +19,7 @@ const fishStore = useFishStore()
 
 <style scoped>
 .aquarium-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-top: 6rem;
   min-height: 600px;
 }
 
