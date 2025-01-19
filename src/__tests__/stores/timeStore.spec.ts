@@ -1,7 +1,7 @@
 import { useTimeStore } from '@/stores/timeStore'
 import { afterEach } from 'node:test'
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 describe('TimeStore', () => {
   beforeEach(() => {
@@ -13,26 +13,26 @@ describe('TimeStore', () => {
     vi.useRealTimers()
   })
 
-  it('initializes with default values', () => {
+  test('initializes with default values', () => {
     const store = useTimeStore()
     expect(store.timeSpeed).toBe(1)
     expect(store.currentDateTime).toBeInstanceOf(Date)
   })
 
-  it('formats date time correctly', () => {
+  test('formats date time correctly', () => {
     const store = useTimeStore()
     const testDate = new Date('2024-03-15 14:30:45')
     store.currentDateTime = testDate
     expect(store.formattedDateTime).toBe('15/03/2024, 14:30:45')
   })
 
-  it('updates time speed', () => {
+  test('updates time speed', () => {
     const store = useTimeStore()
     store.setTimeSpeed(2)
     expect(store.timeSpeed).toBe(2)
   })
 
-  it('updates time according to speed', () => {
+  test('updates time according to speed', () => {
     const store = useTimeStore()
     const initialTime = store.currentDateTime.getTime()
 
