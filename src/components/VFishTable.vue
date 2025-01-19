@@ -90,7 +90,7 @@ const setMealAmount = (fishId: string, amount: number) => mealAmounts.value.set(
             test-id="feed-button"
             type="primary"
             @click="onClickFeed(record as IFish)"
-            :disabled="record.health === HealthStatusEnum.DEAD"
+            :disabled="record.health === HealthStatusEnum.DEAD || !getMealAmount(record.id)"
             style="width: 100%"
             >Feed</Button
           >
