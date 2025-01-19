@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useFishStore } from '@/stores/fishStore'
 import { useTimeStore } from '@/stores/timeStore'
 import { type IFish } from '@/types/fish'
 import { formatTimeDifference, getHealthStatusColor, getHealthStatusText } from '@/util/fishUtils'
@@ -6,15 +7,16 @@ import { Button, Card, Divider, Tag, Typography } from 'ant-design-vue'
 
 const { Title, Text } = Typography
 const timeStore = useTimeStore()
+const fishStore = useFishStore()
 
 interface Props {
   fish: IFish
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const handleFeed = () => {
-  console.log('Feed button clicked')
+  fishStore.feedFish(props.fish.id)
 }
 </script>
 
