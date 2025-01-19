@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { Button, Row, Table, Tag, Typography } from 'ant-design-vue'
+import { watch } from 'vue'
+
+import { TABLE_COLUNMNS } from '@/constants/fish-table-constants'
 import { useFishStore } from '@/stores/fishStore'
 import { useTimeStore } from '@/stores/timeStore'
 import { HealthStatusEnum, type IFish } from '@/types/fish'
@@ -9,50 +13,10 @@ import {
   getHealthStatusText,
   getMealCount,
 } from '@/util/fishUtils'
-import { Tag } from 'ant-design-vue'
-import { watch } from 'vue'
 
+const { Text } = Typography
 const fishStore = useFishStore()
 const timeStore = useTimeStore()
-
-const columns = [
-  {
-    title: 'Fish Name',
-    dataIndex: 'name',
-    key: 'name',
-    width: '15%',
-  },
-  {
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-    width: '15%',
-  },
-  {
-    title: 'Weight',
-    dataIndex: 'weight',
-    key: 'weight',
-    width: '10%',
-  },
-  {
-    title: 'Last Feed',
-    dataIndex: 'lastFeed',
-    key: 'lastFeed',
-    width: '15%',
-  },
-  {
-    title: 'Health',
-    dataIndex: 'health',
-    key: 'health',
-    width: '10%',
-  },
-  {
-    title: 'Actions',
-    dataIndex: 'actions',
-    key: 'actions',
-    width: '15%',
-  },
-]
 
 const onClickFeed = (fish: IFish) => {
   fishStore.feedFish(fish.id)
@@ -72,7 +36,7 @@ watch(
 </script>
 
 <template>
-  <a-table :dataSource="fishStore.fishList" :columns="columns" :pagination="false">
+  <Table :dataSource="fishStore.fishList" :columns="TABLE_COLUNMNS" :pagination="false">
     <template #bodyCell="{ column, record }">
       <template v-if="column.key === 'name'">
         <p>
@@ -84,12 +48,12 @@ watch(
       </template>
       <template v-if="column.key === 'weight'"> {{ record.weight }}g </template>
       <template v-if="column.key === 'lastFeed'">
-        <p>
+        <Text>
           {{
             formatTimeDifference(timeStore.currentDateTime, record.feedingSchedule.lastFeedFullTime)
           }}
           ago
-        </p>
+        </Text>
       </template>
       <template v-if="column.key === 'health'">
         <Tag :color="getHealthStatusColor(record.health)">
@@ -97,16 +61,16 @@ watch(
         </Tag>
       </template>
       <template v-if="column.key === 'actions'">
-        <a-row justify="space-between" align="middle">
-          <a-button
+        <Row justify="space-between" align="middle">
+          <Button
             type="primary"
-            @click="onClickFeed(record)"
-            :disabled="record.health === HealthStatusEnum.Dead"
-            >Feed</a-button
+            @click="onClickFeed(record as IFish)"
+            :disabled="record.health === HealthStatusEnum.DEAD"
+            >Feed</Button
           >
-          <span>({{ getMealCount(record) }})</span>
-        </a-row>
+          <span>({{ getMealCount(record as IFish) }})</span>
+        </Row>
       </template>
     </template>
-  </a-table>
+  </Table>
 </template>

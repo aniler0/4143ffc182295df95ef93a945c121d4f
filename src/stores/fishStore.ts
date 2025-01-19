@@ -44,7 +44,7 @@ export const useFishStore = defineStore('fish', () => {
     const mappedFish = {
       ...fish,
       fishImage: fishTypeToImageSelector(fish.type),
-      health: HealthStatusEnum.Healthy,
+      health: HealthStatusEnum.HEALTHY,
       feedingSchedule: {
         ...fish.feedingSchedule,
         lastFeedFullTime,
@@ -76,7 +76,7 @@ export const useFishStore = defineStore('fish', () => {
 
     // Update health based on previous status and hunger
     if (wasHungry) {
-      if (fish.health !== HealthStatusEnum.Healthy) {
+      if (fish.health !== HealthStatusEnum.HEALTHY) {
         fish.health += 1
       }
     } else {

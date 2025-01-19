@@ -19,24 +19,24 @@ export function fishTypeToImageSelector(type: string): string {
 
 export function getHealthStatusText(status: HealthStatusEnum): string {
   switch (status) {
-    case HealthStatusEnum.Dead:
+    case HealthStatusEnum.DEAD:
       return 'Dead'
-    case HealthStatusEnum.Critical:
+    case HealthStatusEnum.CRITICAL:
       return 'Critical'
-    case HealthStatusEnum.Normal:
+    case HealthStatusEnum.NORMAL:
       return 'Normal'
-    case HealthStatusEnum.Healthy:
+    case HealthStatusEnum.HEALTHY:
       return 'Healthy'
   }
 }
 
 export const getHealthStatusColor = (status: HealthStatusEnum) => {
   switch (status) {
-    case HealthStatusEnum.Dead:
+    case HealthStatusEnum.DEAD:
       return 'error'
-    case HealthStatusEnum.Critical:
+    case HealthStatusEnum.CRITICAL:
       return 'purple' // or any other color for critical
-    case HealthStatusEnum.Healthy:
+    case HealthStatusEnum.HEALTHY:
       return 'success'
     default:
       return 'warning'
@@ -69,8 +69,8 @@ export const checkFishHealthByTime = (fish: IFish, currentTime: Date): HealthSta
   const minutesSinceLastFeed = (currentTime.getTime() - fish.feedingSchedule.healthScheduleTime.getTime()) / (1000 * 60);
   const intervalInMinutes = fish.feedingSchedule.intervalInHours * 60;
   const TOLERANCE = 10;
-  if (fish.health === HealthStatusEnum.Dead) {
-    return HealthStatusEnum.Dead;  // Dead fish stays dead
+  if (fish.health === HealthStatusEnum.DEAD) {
+    return HealthStatusEnum.DEAD;  // Dead fish stays dead
   }
 
   if (minutesSinceLastFeed >= intervalInMinutes + TOLERANCE) {

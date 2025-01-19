@@ -17,10 +17,10 @@ export interface IFish {
 }
 
 export enum HealthStatusEnum {
-    Dead = -1,
-    Critical = 0,
-    Normal = 1,
-    Healthy = 2,
+    DEAD = -1,
+    CRITICAL = 0,
+    NORMAL = 1,
+    HEALTHY = 2,
 }
 
 export interface FeedingSchedule {

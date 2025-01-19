@@ -1,18 +1,14 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
+
+import { FISH_HEIGHT, PADDING, SWIM_DURATION, TANK_HEIGHT } from '@/constants/fish-constants'
 import type { IFish } from '@/types/fish'
 import { HealthStatusEnum } from '@/types/fish'
-import { computed, ref } from 'vue'
 
 const props = defineProps<{
   fish: IFish
   hovered: string
 }>()
-
-
-const TANK_HEIGHT = 550
-const FISH_HEIGHT = 100
-const PADDING = 50
-const SWIM_DURATION = 9
 
 const swimDuration = ref(SWIM_DURATION)
 const startingPosition = ref(Math.random() * 1000)
@@ -20,12 +16,10 @@ const verticalPosition = ref(Math.random() * (TANK_HEIGHT - FISH_HEIGHT - 2 * PA
 const isSwimmingLeft = ref(Math.random() > 0.5)
 
 const isPaused = computed(() => props.hovered === props.fish.id)
-const isDead = computed(() => props.fish.health === HealthStatusEnum.Dead)
+const isDead = computed(() => props.fish.health === HealthStatusEnum.DEAD)
 
 // Use top padding for dead fish
 const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPosition.value + 'px'))
-
-
 </script>
 
 <template>
@@ -36,7 +30,7 @@ const fishPosition = computed(() => (isDead.value ? PADDING + 'px' : verticalPos
       'swim-right': !isSwimmingLeft && !isDead,
       dead: isDead,
       paused: isPaused,
-      hovered:  props.hovered === props.fish.id,
+      hovered: props.hovered === props.fish.id,
     }"
   >
     <img :src="fish.fishImage" class="fish-image" alt="fish" />

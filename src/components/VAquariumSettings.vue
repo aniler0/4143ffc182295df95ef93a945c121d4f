@@ -1,40 +1,49 @@
-<template>
-  <div class="aquarium-settings">
-    <a-row justify="center">
-      <a-col span="24" style="max-width: 1200px;">
-        <div class="settings-group">
-          <a-row justify="space-between">
-            <a-col :span="12">
-              <h1>Time of Aquarium</h1>
-              <h3>{{ timeStore.formattedDateTime }}</h3>
-            </a-col>
-            <a-col :span="12">
-              <a-row type="flex" justify="end" align="middle">
-                <a-select
-                  v-model:value="timeStore.timeSpeed"
-                  style="width: 120px; margin: 8px 0"
-                  @change="timeStore.setTimeSpeed"
-                >
-                  <a-select-option :value="1">1x Speed</a-select-option>
-                  <a-select-option :value="60">60x Speed</a-select-option>
-                  <a-select-option :value="120">120x Speed</a-select-option>
-                  <a-select-option :value="3600">3600x Speed</a-select-option>
-                </a-select>
-              </a-row>
-            </a-col>
-          </a-row>
-        </div>
-      </a-col>
-    </a-row>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { useTimeStore } from '@/stores/timeStore'
+import { Col, Row, Select, SelectOption, Typography } from 'ant-design-vue'
+import type { SelectValue } from 'ant-design-vue/es/select'
 
+const { Text } = Typography
 const timeStore = useTimeStore()
-</script>
 
+const onChangeTimeSpeed = (value: SelectValue) => {
+  timeStore.setTimeSpeed(value as number)
+}
+</script>
+<template>
+  <div class="aquarium-settings">
+    <Row justify="center">
+      <Col span="24" style="max-width: 1200px">
+        <div class="settings-group">
+          <Row justify="space-between">
+            <Col :span="12">
+              <Col>
+                <Text strong>Time of Aquarium</Text>
+              </Col>
+              <Col
+                ><Text>{{ timeStore.formattedDateTime }}</Text>
+              </Col>
+            </Col>
+            <Col :span="12">
+              <Row type="flex" justify="end" align="middle">
+                <Select
+                  v-model:value="timeStore.timeSpeed"
+                  style="width: 140px; margin: 8px 0"
+                  @change="onChangeTimeSpeed"
+                >
+                  <SelectOption :value="1">1x Speed</SelectOption>
+                  <SelectOption :value="60">60x Speed</SelectOption>
+                  <SelectOption :value="120">120x Speed</SelectOption>
+                  <SelectOption :value="3600">3600x Speed</SelectOption>
+                </Select>
+              </Row>
+            </Col>
+          </Row>
+        </div>
+      </Col>
+    </Row>
+  </div>
+</template>
 <style scoped>
 .aquarium-settings {
   position: fixed;
