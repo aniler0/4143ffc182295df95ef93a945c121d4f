@@ -1,45 +1,61 @@
 # 840d9cbe70467c19a6af873c7bd41220
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue 3 + TypeScript application that simulates a virtual aquarium where you can monitor and feed fish in real-time.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- 🐠 Real-time fish simulation with swimming animations
+- 💙 Fish health monitoring system
+- ⏱️ Time speed controls (1x, 60x, 120x, 3600x)
+- 🔄 Automatic health degradation system
+- 📊 Interactive fish information cards
+- 🎯 Visual health indicators
+- 🍽️ Feeding system with proper timing mechanics
 
-## Type Support for `.vue` Imports in TS
+## Tech Stack
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Vue 3 with Composition API
+- TypeScript
+- Pinia for state management
+- Ant Design Vue for UI components
+- Vite as build tool
+- Vitest for unit testing
 
-## Customize configuration
+## Getting Started
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. Clone the repository:
+```sh
+git clone https://github.com/aniler0/840d9cbe70467c19a6af873c7bd41220.git
+cd 840d9cbe70467c19a6af873c7bd41220
+```
 
-## Project Setup
-
+2. Install dependencies:
 ```sh
 npm install
 ```
-
-### Compile and Hot-Reload for Development
-
-```sh
+3. Create a .env file in the root directory with:
+```
+VITE_FISH_API_URL=https://run.mocky.io/v3/e80be173-df55-404b-833b-670e53a4743d
+```
+4. Run development server:
+```
 npm run dev
 ```
+## Available Scripts
 
-### Type-Check, Compile and Minify for Production
+- ```npm run dev``` - Development server
+- ```npm run build``` - Production build
+- ```npm run test:unit``` - Run tests
+- ```npm run lint``` - ESLint check
+- ```npm run format``` - Prettier format
 
-```sh
-npm run build
+## Project Structure
+
 ```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
+src/
+├── components/       # Vue components
+├── stores/           # Pinia state management
+├── types/            # TypeScript definitions
+├── utils/            # Helper functions
+└── composables/      # Vue composables
 ```
