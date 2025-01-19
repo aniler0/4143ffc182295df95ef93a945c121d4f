@@ -60,9 +60,11 @@ npm run dev
 
 ```
 src/
-├── components/       # Vue components
-├── stores/           # Pinia state management
-├── types/            # TypeScript definitions
-├── utils/            # Helper functions
-└── composables/      # Vue composables
+├── components/      # Vue components
+├── stores/          # Pinia state management
+├── types/           # TypeScript definitions
+├── utils/           # Helper functions
+├── composables/     # Vue composables
+└── constants/       # App constants and configurations
+
 ```
