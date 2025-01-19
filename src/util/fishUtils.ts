@@ -70,12 +70,26 @@ export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date):
   return `${hours} ${hourText} ${minutes} ${minuteText}`
 }
 
+export function isAcceptableMealAmount(fish: IFish, providedAmount: number): boolean {
+  // Calculate ideal meal size
+  const mealsPerDay = Math.round(HOURS / fish.feedingSchedule.intervalInHours)
+  const totalFeedPerDay = fish.weight * FEED_PER_GRAM
+  const idealMealAmount = totalFeedPerDay / mealsPerDay
 
-export const getMealCount = (fish: IFish): string => {
+  // Check if provided amount is within range
+  return Number(providedAmount.toFixed(2)) === Number(idealMealAmount.toFixed(2))
+}
+
+export const getMealAmountPerInterval = (fish: IFish): string => {
+  const mealCount = Math.round(HOURS / fish.feedingSchedule.intervalInHours)
+  const fishWeight = fish.weight
+
+  const totalFeedPerDay = fishWeight * FEED_PER_GRAM
+  const feedAmountPerInterval = totalFeedPerDay / mealCount
+  return feedAmountPerInterval.toFixed(3)
+}
+
+export const getDailyMealCount = (fish: IFish): number => {
   const mealCount = Math.round(HOURS / fish.feedingSchedule.intervalInHours);
-  const fishWeight = fish.weight;
-
-  const totalFeedPerDay = fishWeight * FEED_PER_GRAM;
-  const feedAmountPerInterval = totalFeedPerDay / mealCount;
-  return `${Number(feedAmountPerInterval.toFixed(3))}g x ${mealCount} times`;
+  return mealCount;
 }

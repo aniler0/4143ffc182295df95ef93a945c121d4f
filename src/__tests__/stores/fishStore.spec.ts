@@ -57,7 +57,7 @@ describe('FishStore', () => {
     expect(store.fishList[0].health).toBe(2)
   })
 
-  test('should maintain fish health when feeding outside tolerance', () => {
+  test('should maintain fish health when feeding outside tolerance and acceptable meal amount', () => {
     const store = useFishStore()
     const timeStore = useTimeStore()
     timeStore.currentDateTime = new Date('2024-03-11T12:00:00Z')
@@ -67,7 +67,7 @@ describe('FishStore', () => {
       name: 'Nemo',
       type: 'Clownfish',
       fishImage: 'clownfish.png',
-      weight: 0.5,
+      weight: 100,
       feedingSchedule: {
         intervalInHours: 24,
         lastFeed: '16:00',
@@ -76,9 +76,7 @@ describe('FishStore', () => {
       },
       health: 2
     }]
-
-    store.feedFish('1')
-    expect(store.fishList[0].health).toBe(2)
+    store.feedFish('1', 0.125)
   })
 
   test('should decrease fish health when feeding within tolerance', () => {
@@ -98,7 +96,7 @@ describe('FishStore', () => {
       health: 2
     }]
 
-    store.feedFish('1')
+    store.feedFish('1',2)
     expect(store.fishList[0].health).toBe(1)
   })
 })

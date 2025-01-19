@@ -1,13 +1,13 @@
-import {
-  fishTypeToImageSelector,
-  getHealthStatusText,
-  getHealthStatusColor,
-  calculateTimeDifferenceInMinutes,
-  formatTimeDifference,
-  getMealCount
-} from '@/util/fishUtils'
 import { HealthStatusEnum, type IFish } from '@/types/fish'
-import { FEED_PER_GRAM, HOURS } from '@/constants/fish-constants'
+import {
+  calculateTimeDifferenceInMinutes,
+  fishTypeToImageSelector,
+  formatTimeDifference,
+  getDailyMealCount,
+  getHealthStatusColor,
+  getHealthStatusText,
+  getMealAmountPerInterval
+} from '@/util/fishUtils'
 import { describe, expect, test } from 'vitest'
 
 describe('fishUtils', () => {
@@ -58,7 +58,7 @@ describe('fishUtils', () => {
         },
         {
           current: new Date('2024-03-10T10:31:00'),
-          last:    new Date('2024-03-10T10:30:00'),
+          last: new Date('2024-03-10T10:30:00'),
           expected: '1 minute'
         },
         {
@@ -81,25 +81,23 @@ describe('fishUtils', () => {
 
   describe('getMealCount', () => {
     test('should calculate correct meal count and amount', () => {
-      const fish:IFish = {
+      const fish: IFish = {
         id: '1',
         name: 'Goldie',
-        weight: 10,
+        weight: 100,
         fishImage: '/images/goldfish.png',
-        health:1,
+        health: 1,
         type: 'Goldfish',
         feedingSchedule: {
           intervalInHours: 4,
           healthScheduleTime: new Date('2024-03-10T10:00:00'),
-          lastFeed:'12:00',
+          lastFeed: '12:00',
           lastFeedFullTime: new Date('2024-03-10T12:00:00')
         }
       }
-      const mealCount = Math.round(HOURS / fish.feedingSchedule.intervalInHours)
-      const totalFeedPerDay = fish.weight * FEED_PER_GRAM
-      const expectedAmount = (totalFeedPerDay / mealCount).toFixed(3)
 
-      expect(getMealCount(fish)).toBe(`${expectedAmount}g x ${mealCount} times`)
+      expect(getDailyMealCount(fish)).toEqual(6)
+      expect(getMealAmountPerInterval(fish)).toEqual('0.167')
     })
   })
 })

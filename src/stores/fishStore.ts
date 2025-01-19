@@ -5,7 +5,7 @@ import { useFetch } from '@/composables/useFetch'
 import { FEED_TOLERANCE_MINUTES } from '@/constants/fish-constants'
 import { useTimeStore } from '@/stores/timeStore'
 import { type IFish, type IFishResponse } from '@/types/fish'
-import { calculateTimeDifferenceInMinutes } from '@/util/fishUtils'
+import { calculateTimeDifferenceInMinutes, isAcceptableMealAmount } from '@/util/fishUtils'
 import { mapFishResponse, shouldUpdateFishHealth, updateFishHealth } from './helpers/fishStoreHelpers'
 
 const API_URL = import.meta.env.VITE_FISH_API_URL
@@ -25,7 +25,7 @@ export const useFishStore = defineStore('fish', () => {
     }
   }
 
-  const feedFish = (fishId: string) => {
+  const feedFish = (fishId: string,amount:number) => {
     const fish = fishList.value.find(fish => fish.id === fishId)
     if (!fish) return
 
@@ -34,15 +34,19 @@ export const useFishStore = defineStore('fish', () => {
       currentDate,
       fish.feedingSchedule.lastFeedFullTime
     )
+    const isHealthyAmount = isAcceptableMealAmount(fish, amount)
 
-    // Update fish state
+    // First check timing, then check amount
+    const isHealthyTiming = shouldUpdateFishHealth(
+      minutesSinceLastFeed,
+      fish.feedingSchedule.intervalInHours * 60,
+      FEED_TOLERANCE_MINUTES
+    )
+    
+    // Update fish health based on both timing and amount
     fish.health = updateFishHealth(
       fish.health,
-      shouldUpdateFishHealth(
-        minutesSinceLastFeed,
-        fish.feedingSchedule.intervalInHours * 60,
-        FEED_TOLERANCE_MINUTES
-      )
+      isHealthyTiming && isHealthyAmount
     )
 
     // Update feeding times

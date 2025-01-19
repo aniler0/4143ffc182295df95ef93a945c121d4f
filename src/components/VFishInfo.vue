@@ -4,7 +4,12 @@ import { Button, Card, Divider, Tag, Typography } from 'ant-design-vue'
 import { useFishStore } from '@/stores/fishStore'
 import { useTimeStore } from '@/stores/timeStore'
 import { HealthStatusEnum, type IFish } from '@/types/fish'
-import { formatTimeDifference, getHealthStatusColor, getHealthStatusText } from '@/util/fishUtils'
+import {
+  formatTimeDifference,
+  getHealthStatusColor,
+  getHealthStatusText,
+  getMealAmountPerInterval,
+} from '@/util/fishUtils'
 
 const { Title, Text } = Typography
 const timeStore = useTimeStore()
@@ -17,7 +22,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const handleFeed = () => {
-  fishStore.feedFish(props.fish.id)
+  fishStore.feedFish(props.fish.id, Number(getMealAmountPerInterval(props.fish)))
 }
 </script>
 
