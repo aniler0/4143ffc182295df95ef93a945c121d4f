@@ -10,7 +10,6 @@ import { mapFishResponse, shouldUpdateFishHealth, updateFishHealth } from './hel
 
 const API_URL = import.meta.env.VITE_FISH_API_URL
 
-
 export const useFishStore = defineStore('fish', () => {
   const fishList = ref<IFish[]>([])
   const { data, error, isLoading, fetchData } = useFetch<IFishResponse[]>()

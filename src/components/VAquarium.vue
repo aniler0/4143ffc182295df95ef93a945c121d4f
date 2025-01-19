@@ -8,11 +8,11 @@ import VFishInfo from '@/components/VFishInfo.vue'
 import { useFishStore } from '@/stores/fishStore'
 
 const fishStore = useFishStore()
-const activePopoverFishId = ref()
+const activePopoverFishId = ref<string>('')
 
 // Function to handle popover visibility
 const handlePopoverVisibility = (fishId: string, visible: boolean) => {
-  activePopoverFishId.value = visible ? fishId : null
+  activePopoverFishId.value = visible ? String(fishId) : ''
 }
 </script>
 
@@ -22,7 +22,7 @@ const handlePopoverVisibility = (fishId: string, visible: boolean) => {
       <VAquariumBubbles />
       <template v-for="(item, index) in fishStore.fishList" :key="index">
         <Popover
-          :open="activePopoverFishId === item.id"
+          :open="activePopoverFishId === String(item.id)"
           @openChange="(visible: boolean) => handlePopoverVisibility(item.id, visible)"
           title="Fish Info"
         >

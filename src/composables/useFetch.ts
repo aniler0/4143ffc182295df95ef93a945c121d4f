@@ -8,7 +8,7 @@ export function useFetch<T>() {
   const fetchData = async (url: string) => {
     isLoading.value = true
     error.value = null
-    
+
     try {
       const response = await fetch(url)
       data.value = await response.json()

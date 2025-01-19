@@ -7,7 +7,7 @@ import { HealthStatusEnum } from '@/types/fish'
 // Props
 interface Props {
   fish: IFish
-  hovered: string
+  hovered: string | undefined
 }
 const props = defineProps<Props>()
 
@@ -22,7 +22,7 @@ const verticalPosition = ref(
 )
 
 // Computed properties
-const isPaused = computed(() => props.hovered === props.fish.id)
+const isPaused = computed(() => props.hovered === String(props.fish.id))
 const isDead = computed(() => props.fish.health === HealthStatusEnum.DEAD)
 const fishPosition = computed(() =>
   isDead.value ? `${PADDING}px` : `${verticalPosition.value}px`
@@ -37,7 +37,7 @@ const fishPosition = computed(() =>
       'swim-right': !isSwimmingLeft && !isDead,
       'dead': isDead,
       'paused': isPaused,
-      'hovered': hovered === fish.id,
+      'hovered': hovered === String(fish.id),
     }"
   >
     <img
