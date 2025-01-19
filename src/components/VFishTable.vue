@@ -4,10 +4,10 @@ import { computed } from 'vue'
 
 import { TABLE_COLUNMNS } from '@/constants/fish-table-constants'
 import { useFishStore } from '@/stores/fishStore'
+import { checkFishHealthByTime } from '@/stores/helpers/fishStoreHelpers'
 import { useTimeStore } from '@/stores/timeStore'
 import { HealthStatusEnum, type IFish } from '@/types/fish'
 import {
-  checkFishHealthByTime,
   formatTimeDifference,
   getHealthStatusColor,
   getHealthStatusText,

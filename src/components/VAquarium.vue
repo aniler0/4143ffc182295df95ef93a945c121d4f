@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { Popover } from 'ant-design-vue'
 import { ref } from 'vue'
 
 import VAquariumBubbles from '@/components/VAquariumBubbles.vue'
 import VFish from '@/components/VFish.vue'
+import VFishInfo from '@/components/VFishInfo.vue'
 import { useFishStore } from '@/stores/fishStore'
-import VFishInfo from './VFishInfo.vue'
-import { Popover } from 'ant-design-vue'
 
 const fishStore = useFishStore()
 const activePopoverFishId = ref()
@@ -29,7 +29,7 @@ const handlePopoverVisibility = (fishId: string, visible: boolean) => {
           <template #content>
             <VFishInfo :fish="item" />
           </template>
-          <VFish :fish="item" :hovered="activePopoverFishId"  />
+          <VFish :fish="item" :hovered="activePopoverFishId" />
         </Popover>
       </template>
     </div>

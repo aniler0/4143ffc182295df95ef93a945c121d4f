@@ -1,3 +1,4 @@
+import { FEED_PER_GRAM, HOURS } from "@/constants/fish-constants"
 import { HealthStatusEnum, type IFish } from "@/types/fish"
 
 export function fishTypeToImageSelector(type: string): string {
@@ -43,6 +44,10 @@ export const getHealthStatusColor = (status: HealthStatusEnum) => {
   }
 }
 
+export function calculateTimeDifferenceInMinutes(currentTime: Date, lastFeedTime: Date): number {
+  return Math.floor((currentTime.getTime() - lastFeedTime.getTime()) / (1000 * 60));
+}
+
 export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date): string {
   const diffInMinutes = Math.floor(
     (currentTime.getTime() - lastFeedFullTime.getTime()) / (1000 * 60)
@@ -65,28 +70,12 @@ export function formatTimeDifference(currentTime: Date, lastFeedFullTime: Date):
   return `${hours} ${hourText} ${minutes} ${minuteText}`
 }
 
-export const checkFishHealthByTime = (fish: IFish, currentTime: Date): HealthStatusEnum => {
-  const minutesSinceLastFeed = (currentTime.getTime() - fish.feedingSchedule.healthScheduleTime.getTime()) / (1000 * 60);
-  const intervalInMinutes = fish.feedingSchedule.intervalInHours * 60;
-  const TOLERANCE = 10;
-  if (fish.health === HealthStatusEnum.DEAD) {
-    return HealthStatusEnum.DEAD;  // Dead fish stays dead
-  }
-
-  if (minutesSinceLastFeed >= intervalInMinutes + TOLERANCE) {
-    fish.feedingSchedule.healthScheduleTime = currentTime;
-    fish.health -= 1
-  }
-
-  return fish.health;  // Maintain current health if within feeding interval
-}
 
 export const getMealCount = (fish: IFish): string => {
-  const mealCount = Math.round(24 / fish.feedingSchedule.intervalInHours);
+  const mealCount = Math.round(HOURS / fish.feedingSchedule.intervalInHours);
   const fishWeight = fish.weight;
-  const feedPerGram = 0.01;
 
-  const totalFeedPerDay = fishWeight * feedPerGram;
+  const totalFeedPerDay = fishWeight * FEED_PER_GRAM;
   const feedAmountPerInterval = totalFeedPerDay / mealCount;
   return `${Number(feedAmountPerInterval.toFixed(3))}g x ${mealCount} times`;
 }
